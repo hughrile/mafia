@@ -1,0 +1,395 @@
+:root {
+  --fontTitle: 'Teko', sans-serif;
+  --fontMain: 'Montserrat', sans-serif;
+  --fontText: 'Oxygen', sans-serif;;
+
+  --textColor: hsla(0, 0%, 100%, 0.75);
+  --popupColor: #353535;
+  --accent: rgb(229,45,39, 0.8);
+  --bgColor: #161616;
+
+  --shadowMain: 0px 0px 15px 2px rgba(0,0,0,0.4);
+  --shadowBig: 0px 10px 40px 25px rgba(0,0,0,0.35);
+}
+
+body {
+  background: var(--bgColor);
+  background: rgb(22,22,22);
+  background: linear-gradient(180deg, rgb(29, 29, 29) 70%, rgba(0,0,0,1) 100%);
+  height: 100%;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  margin: 0;
+}
+
+h1{ 
+    font-family: var(--fontMain);
+    text-align: center; 
+    color: var(--textColor, white);
+    margin: auto;
+}
+
+p {
+  font-family: var(--fontMain);
+  font-size: 24px;
+  font-weight: 500;
+  color: rgb(255, 255, 255);
+  margin: 0;
+  padding-bottom: 12px;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    border-style: none;
+  }
+
+input {
+  font-family: var(--fontMain);
+  font-weight: 100;
+  color: white;
+  background-color: transparent;
+  font-size: 18px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  border-style: none;
+  z-index: 1;
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+::placeholder {
+
+  opacity: 0.3;
+
+
+}
+
+label {
+  font-family: var(--fontMain);
+  font-weight: 100;
+  font-size: 14px;
+  color: var(--textColor, white);
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  padding: 0;
+}
+/*
+fancybuttons {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-style: none;
+}
+*/
+.row {
+  display: flex;
+  position: relative;
+
+}
+
+.column {
+  flex: 50%;
+  text-align: center;
+  margin: 10px
+}
+
+.widthFull {
+  width: 100%;
+}
+
+.shadow {
+  -webkit-box-shadow: var(--shadowMain); 
+  box-shadow: var(--shadowMain);
+}
+
+.shadowBig {
+  -webkit-box-shadow: var(--shadowBig); 
+  box-shadow: var(--shadowBig);
+}
+
+.inputBox {
+  /*global style class*/
+  background-color: var(--bgColor, black);
+  font-size: 24px;
+  height: 36px;
+  padding: 3px;
+  outline: none;
+  border: none;
+  border-style: none;
+  border-radius: 3px;
+  position: relative;
+  
+}
+
+.btnBox {
+  /*global style class*/
+  outline: none;
+  border: none;
+/*
+  border: white;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 3px;
+  */
+}
+
+.popupWindow {
+  background-color: var(--popupColor, black);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: min-content;
+  width: 40%;
+  max-width: 800px;
+  visibility: hidden;
+  animation-duration: 1.5s;
+  -webkit-box-shadow: 0px 10px 40px 25px rgba(0,0,0,0.35); 
+  box-shadow: 0px 10px 40px 25px rgba(0,0,0,0.35);
+}
+
+.exitButton {
+  background-color: var(--bgColor, black);
+  color: var(--textColor, white);
+  position: absolute;
+  top: 3px;
+  right: 9px;
+  height: 25px;
+  width: 25px;
+  border-style: none;
+  border-radius: 3px;
+  padding: 0;
+  font-size: 16px;
+  
+}
+
+.exitText {
+  position: relative;
+  bottom: 1px;
+}
+
+
+
+/* Individual Elements */
+
+#titleText {
+  font-family: 'Teko', sans-serif;
+  font-style: bold;
+  font-weight: 600;
+  color: white;
+  font-size: 10vw;
+}
+
+#titleSubtext {
+  font-family: 'Teko', sans-serif;
+  font-style: bold;
+  font-weight: 600;
+  color: white;
+  font-size: 2vw;
+}
+
+
+#mainHeader {
+  visibility: hidden;
+}
+
+
+
+#gameSetupConsole {
+  visibility: hidden;
+  height: auto;
+  margin: auto;
+  border-radius: 3px;
+}
+
+/*
+#groupVoteGUI {
+
+}
+*/
+
+/*
+#gameEventGUI {
+
+}
+*/
+
+#usernameConsole {
+  visibility: visible;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+#usernameTitle {
+  text-align: center;
+  font-family: var(--fontMain);
+}
+
+#usernameBox {
+  position: relative;
+}
+
+#usernameInput {
+  position: absolute;
+}
+
+#usernameBtn {
+  color: white;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-style: none;
+  position: absolute;
+  right: 6px;
+  bottom: 5%;
+  height: 100%;
+  font-size: 100%;
+  z-index: 2;
+}
+
+
+
+
+
+
+
+#gameStartBox {
+  margin: auto;
+  padding-bottom: 4px;
+  
+  height: 50px;
+}
+
+#gameStartBtn {
+  
+  font-family: var(--fontText);
+  font-size: 22px;
+  font-weight: 500;
+  
+  color: white;
+
+  background: var(--accent, rgb(229,45,39, 0.8));
+  -webkit-box-shadow: var(--shadowMain); 
+  box-shadow: var(--shadowMain);
+
+
+  height: 36px;
+  padding: 3px;
+
+}
+
+
+
+
+
+  #chatConsole{
+    max-width: 400px;
+    margin: 30px auto;
+    border: 1px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 3px;
+    display: none;
+}
+
+#chatConsoleWindow{
+    height: 100px;
+    overflow: auto;
+    background: #f9f9f9;
+}
+
+#chatConsoleOutput p{
+    padding: 14px 0px;
+    margin: 0 20px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #555;
+}
+
+
+
+#cardUI {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    height: 0;
+    width: auto;
+    border-style: none;
+    border-style: none;
+    visibility: hidden;
+}
+
+
+#player-listBox {
+ background-color: teal;
+ font-size: 10px;
+ margin: 20px;
+ padding: 4px;
+ height: auto;
+ width: 80px;
+}
+
+#player-list {
+  list-style: none;
+  font-style: bold;
+  background-color: white;
+  padding: 10px;
+  margin: 0;
+  width: auto;
+  font-size: larger;
+}
+
+
+
+
+#voteSelect {
+  display: none;
+}
+
+
+.votes {
+  color: rgb(194, 0, 0);
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+https://cloudconvert.com/ai-to-svg
+https://rgbacolorpicker.com/
+https://www.w3schools.com/howto/howto_css_aspect_ratio.asp
+*/

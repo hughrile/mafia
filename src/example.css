@@ -1,0 +1,133 @@
+body {
+	background-color: #C0C0C0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#main-view {
+	width:1000px;
+	margin: 0 auto;
+}
+
+#header-area {
+	margin: 5px;
+}
+
+#announcement {
+	text-align: left;
+}
+
+#flex-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+#flex-container > div {
+	margin: 5px;
+}
+
+#left-pane {
+	background-color: #fff;
+	min-height: 300px;
+	min-width: 150px;
+	max-width: 20%;
+
+	order: 1;
+	flex-grow: 1;
+}
+
+#middle-pane {
+	order: 2;
+	flex-grow: 2;
+}
+
+#content {
+	background-color: #FFFFFF;
+	width: calc(100% - 12px);
+	height: 300px;
+	padding: 5px;
+	border: solid 1px #999;
+	overflow-y: scroll;
+}
+
+#right-pane {
+	background-color: #fff;
+	padding: 5px;
+	min-height: 300px;
+	min-width: 150px;
+	max-width: 20%;
+
+	order: 3;
+	flex-grow: 1;
+}
+
+#selectArea {
+	width: 185px;
+	overflow-x: visible;
+	display: none;
+}
+
+#votingPlayers {
+	margin: 0;
+}
+
+#select {
+	width: 185px;
+}
+
+#vote {
+	width:50px;
+}
+
+#inventory {
+	width: 100%;
+	display: none;
+}
+
+.controls {
+	display: inline-block;
+	width: 100%;
+	float: left;
+}
+
+.controls > div {
+	margin-top: 3px;
+	margin-bottom: 0px;
+}
+
+.controls input {
+	margin: 0px;
+}
+
+#nick-form {
+	width: 100%;
+}
+
+#name {
+	width: 200px;
+}
+
+#nick {
+	width: 50px;
+}
+
+#chat-form {
+	width: 100%;
+}
+
+#field {
+	display: inline-block;
+	width: 90%;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+#send {
+	width: 10%;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}

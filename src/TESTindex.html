@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>hi</title>
+        <link rel="shortcut icon" href="#">
+        <link href="/public/index.css"rel="stylesheet" type="text/css">
+
+    </head>
+    <body>
+
+
+
+
+
+<input type="text" id="myText" value="Player">
+
+
+<button onclick="clickFunc()">Create Player</button>
+<br>
+<br>
+<button onclick="clickFunc2()">Assign Roles</button>
+<br>
+<br>
+<button onclick="gameStart()">Start Game</button>
+<br>
+<br>
+<button onclick="displayCard()">show card</button>
+<br>
+<br>
+<button onclick="drawGroupVoteGUI()">start Vote</button>
+
+
+
+        <h1>Welcome to the unfinished mafia project</h1>
+        <p>
+            Work in progress
+        </p>
+
+        <div id="timerDisplay">
+            <h3>Current Phase: <span id="curr-phase"></span> <br> Time: <span id="time-left"></span>
+                <span style="color: green;" id="time-init"></span></h3>
+        </div>
+
+        <br>
+        
+        <p>Player Information:</p>
+        <p id="playtab"></p>
+        <p id="Team"></p>
+
+        <p>Player List:</p>
+    <ul class="player-list">
+    </ul>
+
+    <div id="groupVoteGUI">
+        <p>Vote Here:</p>
+        <div class="groupVoteButtons">
+        </div>
+    </div>
+
+        
+    <div id="gameUI">
+        <div id="cardPlaceholder">
+            <button onclick="hideCard()" class="exitButton">X</button>
+            <img src="/src/Template.svg">
+        </div>
+    </div>
+
+
+        <script src="/public/function.js"></script>
+        <script src="/public/app.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>var socket = io();</script>
+    </body>
+</html>

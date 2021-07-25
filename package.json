@@ -1,0 +1,18 @@
+{
+  "name": "mafia-online",
+  "version": "1.0.0",
+  "description": "Mulitplayer Mafia experience for youngies",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "devStart": "nodemon server.js"
+  },
+  "author": "rileyhughes",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "pug": "^3.0.2",
+    "socketio": "^1.0.0"
+  }
+}

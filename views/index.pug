@@ -1,0 +1,122 @@
+head
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  title Mafia online
+  link(rel='shortcut icon' href='#')
+  link(href='/index.css' rel='stylesheet' type='text/css')
+  script(src='/socket.io/socket.io.js')
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alata&family=Teko:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Oxygen&display=swap" rel="stylesheet"> 
+
+
+
+
+h1#titleText Mafia Online
+  span#titleSubtext v1
+
+p#mainHeader Welcome, please enter your name below!
+
+
+
+
+#gameSetupConsole.popupWindow
+  .row
+    .column
+      p Duration
+
+      .inputBox
+        label Lobby
+        input#lobbyDurInput(type='text' placeholder='90')
+      br
+      .inputBox
+        label Night
+        input#nightDurInput(type='text' placeholder='30')
+      br
+      .inputBox
+        label Day
+        input#dayDurInput(type='text' placeholder='120')
+      br
+      .inputBox
+        label Voting
+        input#voteDurInput(type='text' placeholder='15')
+
+    .column
+      p Roles
+
+      .inputBox
+        label Mafia
+        input#mafiaInput(type='text' placeholder='')
+      br
+      .inputBox
+        label Doctors
+        input#doctorInput(type='text' placeholder='')
+      br
+      .inputBox
+        label Detectives
+        input#detectiveInput(type='text' placeholder='')
+      br
+      .inputBox
+        label Breadman
+        input#breadmanInput(type='text' placeholder='')
+
+  br
+  #gameStartBox
+    button#gameStartBtn.btnBox.widthFull Start Game
+
+
+#timerDisplay
+  p
+    | Current Phase: 
+    span#curr-phase
+    br
+    |  Time: 
+    span#time-left(style='color: green;')
+    
+p Player List:
+#player-listBox
+  ul#player-list
+//button#showVoteGUI show voting
+
+
+#gameUI
+p Game UI visible
+  #cardUI
+    button#exitCard.exitButton
+      .exitText &#10006
+    img(src='./Template.svg').shadow
+
+  #groupVoteGUI.popupWindow
+    button#exitVote.exitButton X
+    p Vote Here:
+    .groupVoteButtons
+    br
+    #voteSelect
+    
+
+  #gameEventGUI.popupWindow
+    button#exitEvent.exitButton X
+    h1#gameEventTitle Player Died
+    br
+    p#gameEventText Player x has died!
+
+  button#showCardBtn Show Card
+  button#showEventBtn Show Event temp
+
+
+#usernameConsole.popupWindow
+  p#usernameTitle Please enter your name...
+  #usernameBox.inputBox
+    input#usernameInput(autocomplete='off' data-lpignore="true" type='text')
+    button#usernameBtn &#10148
+  
+p Public Chat:
+#chatConsole
+  #chatConsoleWindow
+    #chatConsoleOutput
+  input#chatConsoleMessage(type='text' placeholder='Message')
+  button#chatConsoleSend Send
+script(src='./function.js')
+script(src='./app.js')
+script(src='/socket.io/socket.io.js')

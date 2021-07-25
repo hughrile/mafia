@@ -1,0 +1,70 @@
+  playerButtons = functions.groupVoteList(); // Get all buttons
+  for (i = 0; i < playersArray.length; i++) { // emit buttons to all players
+    io.to(playersArray[i].socketId).emit('showVote', { buttonParse: playerButtons });
+  }
+
+
+
+        for (i = 0; i < playersArray.length; i++) {
+        console.log('Voted for: ' + playersArray[i].playerVotesFor);
+      } //change to target array
+
+
+      // Voting Functions
+
+
+
+var groupVoteList = function() {    
+    var players = '';
+    for (i = 0; i < playersArray.length; i++) {
+        var name = playersArray[i].playerName;
+        let ID = playersArray[i].playerId;
+        players += `<button class='button' id = '${ID}' onclick='getPlayerVote()'> ${name} </button>`;
+    }
+    return players;
+}
+
+
+  // Push buttons to target players
+/*
+  playerButtons = functions.groupVoteList(targetArray); // Get all buttons
+  for (i = 0; i < targetArray.length; i++) { // emit buttons to all players
+    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: playerButtons });
+  }
+*/
+
+
+
+
+
+/*
+  socket.on('getVote', function(data){ // Voting data validation event
+    
+    if (voteNum == playersArray.length) {
+      srv.emit('votesUpdate', {  }); // Do something with votes
+      voteNum = 0;
+    }
+
+    console.log('voteNum: '+voteNum);
+
+    player = playersArray[functions.getPlayerBySocket(socket.id)];
+    player.playerVotesFor = data.vote;
+
+    console.log(socket.id + 'playerVote updated to:' + player.playerVotesFor);
+
+
+    voteNum++;
+
+     neccesary
+    if (data.vote.length == 0) { // Filter out or react to non entries
+      //console.log('invalidated vote');
+    } else if (data.vote >= 0 && data.vote <= playersArray.length -1) { // Main validation filter
+      voteArray.push(data.vote);
+    }
+
+    //srv.emit(`testing`,  { voteArray: voteArray });
+
+
+    //pass vote to the vote array push machine
+  });
+*/
