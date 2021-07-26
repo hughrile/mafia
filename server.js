@@ -4,6 +4,7 @@ const express = require('express');
 const socket = require('socket.io');
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
+var socket = io.connect();
 
 const app = express();
 const server = http.createServer(app);
