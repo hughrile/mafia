@@ -53,7 +53,7 @@ app.get("/", function(req, res){
 	res.render("index");
 });
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, "views")));
 
 var roomno = 1; // room variable
 
