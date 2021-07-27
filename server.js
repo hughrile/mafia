@@ -57,7 +57,7 @@ app.use(express.static(__dirname + '/public'));
 
 var roomno = 1; // room variable
 
-io.on('connection', (socket) => { // connection start
+io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
