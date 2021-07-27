@@ -1,11 +1,12 @@
-const express = require('express');
-const path = require('path');
-const http = require('http');
 const PORT = process.env.PORT || 3000;
-const socketio = require('socket.io');
-const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+
+const express = require('express')
+const app = express()
+const path = require('path');
+
+const httpServer = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
 
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
@@ -15,8 +16,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// Start server
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 
 // Server state variables
 var checkNum = -1;
@@ -36,8 +36,6 @@ var voteTimeOut;
 
 var spectatorTotal = 0;
 
-//const voteArray = [];
-
 // import the functions module
 let functions = require('./public/function.js');
 const { playersArray } = require('./public/function.js');
@@ -56,6 +54,12 @@ app.get("/", function(req, res){
 app.use(express.static(path.join(__dirname, "/public")));
 
 var roomno = 1; // room variable
+
+
+
+// Start server
+io.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 
 io.on('connection', socket => { // connection start
 
