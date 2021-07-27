@@ -1,13 +1,13 @@
-const path = require('path');
-const http = require('http');
+const app = require("express")();
+const http = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(http, options);
 const express = require('express');
 const socket = require('socket.io');
+
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
 
-const app = express();
-const server = http.createServer(app);
-const io = socket(server);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -623,4 +623,4 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+http.listen(PORT, () => console.log(`Server running on port ${PORT}`));
