@@ -1,8 +1,8 @@
 const PORT = process.env.PORT || 3000;
 
+const path = require('path');
 const express = require('express');
 const app = express();
-const path = require('path');
 
 const httpServer = require("http").createServer(app);
 const options = { /* ... */ };
@@ -26,6 +26,7 @@ var phaseNumber = 1; // used to trigger next phase in a cycle, not reliable as t
 var roundNumber = 1;
 var maxRounds = 50; // Must be optional
 var serverHost;
+var roomno = 1; // room variable
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -52,8 +53,6 @@ app.get("/", function(req, res){
 });
 
 app.use(express.static(path.join(__dirname, "/public")));
-
-var roomno = 1; // room variable
 
 
 io.on('connection', socket => { // connection start
@@ -625,4 +624,4 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
   }, data.phase.phaseDuration*1000); // after this long
 });
 
-io.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`))
