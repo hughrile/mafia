@@ -1,9 +1,11 @@
-const app = require("express")();
-const http = require("http").createServer(app);
-const options = { /* ... */ };
-const io = require("socket.io")(http, options);
 const express = require('express');
-const socket = require('socket.io');
+const path = require('path');
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+const socketio = require('socket.io');
+const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
@@ -12,6 +14,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+// Start server
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 // Server state variables
 var checkNum = -1;
@@ -620,7 +625,3 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
   }, data.phase.phaseDuration*1000); // after this long
 });
-
-
-const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => console.log(`Server running on port ${PORT}`));
