@@ -1,7 +1,7 @@
     // app.js
 
 // Making Connection
-var socket = io.connect('http://localhost:3000')
+var socket = io();
 
 // Querying the DOM
 
