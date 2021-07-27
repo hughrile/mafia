@@ -56,11 +56,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 var roomno = 1; // room variable
 
 
-
-// Start server
-io.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-
-
 io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
@@ -629,3 +624,5 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
   }, data.phase.phaseDuration*1000); // after this long
 });
+
+io.listen(PORT, () => console.log(`Server running on port ${PORT}`))
