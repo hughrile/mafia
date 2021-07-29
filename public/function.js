@@ -295,6 +295,14 @@ var getPlayerById = function(playerID) {
   }
 }
 
+var getSocketArray = function(socketID) {
+    for(i = 0;i < getSocketArray.length;i++){
+        if(getSocketArray[i] == socketID){
+          return i;
+      }
+  }
+}
+
 var getTeamByRole = function(roleName) { // roles
 
     if (roleName == 'civilian') { // this is really dodgy, i couldnt get my for loop getting the 0 without breaking
@@ -468,6 +476,7 @@ var splicifier = function(e) { // for roles init
         userCreate: userCreate,
         getPlayerBySocket: getPlayerBySocket,
         getPlayerById: getPlayerById,
+        getSocketArray: getSocketArray,
         isSpectator: isSpectator,
         isHost: isHost,
         getMode: getMode,

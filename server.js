@@ -27,6 +27,7 @@ var roundNumber = 1;
 var maxRounds = 50; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
+var socketArray = [] // global sockets array
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -60,6 +61,7 @@ io.on('connection', socket => { // connection start
   if (allowPlayers == true) { // Create unnamed player using socketID
 
     functions.userCreate(socket.id);
+    socketArray.push(socket.id);
     io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
     if (serverHost === undefined || serverHost === '') { // first player becomes host
@@ -90,6 +92,7 @@ io.on('connection', socket => { // connection start
     } else {
 
       playersArray.splice(functions.getPlayerBySocket(socket.id), 1); // remove player
+      socketArray.splice(functions.getSocketArray(socket.id), 1); // current progess
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
       console.log(`Player disconnected (${socket.id})`);
@@ -189,7 +192,6 @@ io.on('connection', socket => { // connection start
 
     socket.emit('exitUsername');
 
-    var socketArray = Object.keys(io.sockets.sockets);
 
     var socketExists = function() {
       for (i = 0; i < socketArray.length; i++) { 
@@ -208,11 +210,13 @@ io.on('connection', socket => { // connection start
       player.playerName = data.user;
       console.log(`Username: ${player.playerName}`);
       socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
+      console.log(socketArray.length);
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
     } else {
       // Create new player
       console.log(`Does not exist yet, something is broken :(`);
+      console.log(socketArray.length);
       functions.userCreate(socket.id);
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
     }
