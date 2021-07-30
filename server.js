@@ -82,6 +82,8 @@ io.on('connection', socket => { // connection start
 
   }
 
+  console.log(`${socketArray.length} instances connected`);
+
   socket.on('disconnecting', () => {
 
 
@@ -188,6 +190,9 @@ io.on('connection', socket => { // connection start
     socket.emit('exitGameSetup')
   });
 
+
+
+
   socket.on('userSubmit', function(data){
 
     socket.emit('exitUsername');
@@ -207,10 +212,9 @@ io.on('connection', socket => { // connection start
       //functions.userCreate(socket.id, data.user)
 
       var player = playersArray[functions.getPlayerBySocket(socket.id)];
+      console.log(`${player.playerName} username -> ${data.user}`);
       player.playerName = data.user;
-      console.log(`Username: ${player.playerName}`);
       socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
-      console.log(socketArray.length);
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
     } else {

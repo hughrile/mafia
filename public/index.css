@@ -246,7 +246,7 @@ fancybuttons {
 */
 
 #usernameConsole {
-  visibility: visible;
+  visibility: hidden;
   padding: 10px;
   border-radius: 3px;
 }
@@ -264,7 +264,7 @@ fancybuttons {
   position: absolute;
 }
 
-#usernameBtn {
+#usernameTriggerBtn {
   color: white;
   background-color: transparent;
   outline: none;
@@ -277,6 +277,8 @@ fancybuttons {
   font-size: 100%;
   z-index: 2;
 }
+
+
 
 
 
@@ -384,9 +386,42 @@ fancybuttons {
 }
 
 
+.lowerBtn {
+  bottom: 0;
+  position: inherit;
+  font-family: var(--fontText);
+  font-size: 14;
+  font-weight: 500;
+  
+  color: black;
+
+  background: white;
+  -webkit-box-shadow: var(--shadowMain); 
+  box-shadow: var(--shadowMain);
+
+  border: 0;
+  outline: 0;
+  height: 36px;
+  width: 200px;
+  padding: 0;
+  margin: 10px;
+}
 
 
+#lowerMenu {
+  bottom: 0px;
+  width: 100%;
+  height: 2%;
+  background-color: var(--accent);
+  position: fixed;
+  background: rgb(161, 161, 161);
+}
 
+#usernameIcon {
+  rotate: 270deg;
+  font-size: 22px;
+  color: black;
+}
 
 
 

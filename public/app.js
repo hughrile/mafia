@@ -21,7 +21,11 @@ var gameStartBtn = document.getElementById('gameStartBtn');
 // Username DOM
 var usernameConsole = document.getElementById('usernameConsole');
 var usernameInput = document.getElementById('usernameInput');
-var usernameBtn = document.getElementById('usernameBtn');
+var usernameTriggerBtn = document.getElementById('usernameTriggerBtn');
+var usernameBtn = document.getElementById('usernameBtn'); // to show the username panel
+var usernameIcon = document.getElementById('usernameIcon'); //
+
+
 var showVote = document.getElementById('showVoteGUI');
 var roleInit = document.getElementById('roleInit');
 // Header DOM (delete double instance later)
@@ -76,16 +80,27 @@ socket.on('serverHost', function(){ // hide and reset vote window
 
 
 
-usernameBtn.addEventListener('click', function(){ // On clicking username button
+usernameTriggerBtn.addEventListener('click', function(){ // On clicking username button
     socket.emit('userSubmit', {
         user: usernameInput.value,
         socket: socket.id
     });
+    usernameIcon.style.rotate = '270deg';
 }); // do an if statement to block out innapropriate or existing words
 
 socket.on('exitUsername', function(){ // hide and reset vote window
     usernameConsole.style.visibility= 'hidden';
 })
+
+usernameBtn.addEventListener('click', function(){ // On clicking username button
+    if ((usernameConsole.style.visibility == 'visible')){
+        usernameConsole.style.visibility = 'hidden'
+        usernameIcon.style.rotate = '270deg';
+    } else {
+        usernameConsole.style.visibility = 'visible'
+        usernameIcon.style.rotate = '90deg';
+    }
+});
 
 
 /*
