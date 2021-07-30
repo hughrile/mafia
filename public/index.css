@@ -177,7 +177,7 @@ fancybuttons {
 
 
 
-/* Individual Elements */
+/* Individual Elements 
 
 #titleText {
   font-family: 'Teko', sans-serif;
@@ -185,19 +185,43 @@ fancybuttons {
   font-weight: 600;
   color: white;
   font-size: 10vw;
+}*/
+
+#titleBox {
+  width: 100%;
+  margin-left: 25%;
+  margin-right: 25%;
+  padding-top: 24px;
 }
+
+#titleText {
+  width: 50%;
+}
+
+#headerBox {
+  width: 100%;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+
 
 #titleSubtext {
   font-family: 'Teko', sans-serif;
   font-style: bold;
   font-weight: 600;
   color: white;
-  font-size: 2vw;
+  font-size: 1.5vw;
 }
 
 
 #mainHeader {
-  visibility: hidden;
+  font-family: var(--fontMain);
+  text-align: center;
+  visibility: visible;
+  padding-top: 4px;
+  width: 60%;
+  font-size: 1.5vw;
 }
 
 
