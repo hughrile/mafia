@@ -317,6 +317,20 @@ var getTeamByRole = function(roleName) { // roles
 
 }
 
+var isSus = function(roleName) { // roles
+
+    if (roleName == 'civilian') { // this is really dodgy, i couldnt get my for loop getting the 0 without breaking
+        return rolesArray[0].roleSus;
+    } else {
+        for(l = rolesArray.length -1; l> 0; --l){
+            if(rolesArray[l].roleName == roleName){
+              return rolesArray[l].roleSus;
+          }
+    }
+    }
+
+}
+
 var isSpectator = function(socketID) {
     if (playersArray[getPlayerBySocket(socketID)] == null) {
         return true;
@@ -477,6 +491,7 @@ var splicifier = function(e) { // for roles init
         getPlayerBySocket: getPlayerBySocket,
         getPlayerById: getPlayerById,
         getSocketArray: getSocketArray,
+        isSus: isSus,
         isSpectator: isSpectator,
         isHost: isHost,
         getMode: getMode,

@@ -35,7 +35,6 @@ p {
   font-weight: 500;
   color: rgb(255, 255, 255);
   margin: 0;
-  padding-bottom: 12px;
 }
 
 img {
@@ -97,7 +96,7 @@ fancybuttons {
 .column {
   flex: 50%;
   text-align: center;
-  margin: 10px
+  margin: 10px;
 }
 
 .widthFull {
@@ -140,6 +139,20 @@ fancybuttons {
   */
 }
 
+.alertWindow {
+  background-color: var(--popupColor, black);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 800px;
+  visibility: hidden;
+  animation-duration: 1.5s;
+  -webkit-box-shadow: var(--shadowMain); 
+  box-shadow: var(--shadowMain);
+}
+
 .popupWindow {
   background-color: var(--popupColor, black);
   position: fixed;
@@ -155,24 +168,86 @@ fancybuttons {
   box-shadow: 0px 10px 40px 25px rgba(0,0,0,0.35);
 }
 
+
+
+#exitCard {
+  right: 9px; 
+}
+
 .exitButton {
   background-color: var(--bgColor, black);
   color: var(--textColor, white);
   position: absolute;
   top: 3px;
-  right: 9px;
+  right: 3px;
   height: 25px;
   width: 25px;
   border-style: none;
   border-radius: 3px;
   padding: 0;
   font-size: 16px;
+}
+
+
+#confirmBtnBox {
+  margin: auto;
+  padding-bottom: 4px;
   
+  height: 50px;
 }
 
 .exitText {
   position: relative;
   bottom: 1px;
+}
+
+#voteHeading {
+  margin: 10px;
+}
+/*
+.groupVoteButtons {
+  margin: 10px;
+}
+*/
+.playerButton {
+  margin: 10px;
+  height: 32px;
+  font-weight: 400;
+  width: max-content;
+  padding: 0 10px;
+  max-width: 120px;
+  border-style: none;
+  outline-style: none;
+  border-radius: 3px;
+  text-align: center;
+}
+
+#groupVoteGUI {
+  visibility: hidden;
+  height: auto;
+  margin: auto;
+  border-radius: 3px;
+}
+
+#voteSelect {
+  display: none;
+}
+
+
+#exitVote {
+  margin: 0;
+  padding: 4px;
+  margin-top: 10px;
+
+  font-family: var(--fontText);
+  font-size: 22px;
+  font-weight: 500;
+  color: black;
+  background: white;
+  -webkit-box-shadow: var(--shadowMain); 
+  box-shadow: var(--shadowMain);
+  height: 36px;
+  padding: 3px;
 }
 
 
@@ -233,17 +308,22 @@ fancybuttons {
   border-radius: 3px;
 }
 
-/*
-#groupVoteGUI {
 
-}
-*/
 
-/*
+
 #gameEventGUI {
-
+  visibility: hidden;
+  flex: 50%;
+  text-align: center;
+  margin: 0;
+  padding: 8px;
+  padding-right: 39px;
+  border-radius: 3px;
 }
-*/
+
+#gameEventText {
+  font-size: 14px;
+}
 
 #usernameConsole {
   visibility: hidden;
@@ -270,13 +350,14 @@ fancybuttons {
   outline: none;
   border: none;
   border-style: none;
-  position: absolute;
+  position: absolute; /*required for icon*/
   right: 6px;
   bottom: 5%;
   height: 100%;
   font-size: 100%;
   z-index: 2;
 }
+
 
 
 
@@ -294,21 +375,15 @@ fancybuttons {
 }
 
 #gameStartBtn {
-  
   font-family: var(--fontText);
   font-size: 22px;
   font-weight: 500;
-  
   color: white;
-
   background: var(--accent, rgb(229,45,39, 0.8));
   -webkit-box-shadow: var(--shadowMain); 
   box-shadow: var(--shadowMain);
-
-
   height: 36px;
   padding: 3px;
-
 }
 
 
@@ -370,13 +445,6 @@ fancybuttons {
   margin: 0;
   width: auto;
   font-size: larger;
-}
-
-
-
-
-#voteSelect {
-  display: none;
 }
 
 

@@ -79,6 +79,7 @@ io.on('connection', socket => { // connection start
 
     console.log(`Spectator connected`);
     spectatorTotal++
+    io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
 
   }
 
@@ -234,21 +235,22 @@ io.on('connection', socket => { // connection start
 
   socket.on('gameBtn', function(data){
     checkNum++;
-    srv.emit('gameStart', {
+    if (socket.id == serverHost.socketId) { // validate that serverhost made this request
+      srv.emit('gameStart', {
 
-      checkNum: checkNum,
-      lobbyDuration: data.lobbyDuration,
-      nightDuration: data.nightDuration,
-      dayDuration: data.dayDuration,
-      groupVoteDuration: data.groupVoteDuration,
-      
-      mafiaInput: data.mafiaInput,
-      doctorInput: data.doctorInput,
-      detectiveInput: data.detectiveInput,
-      breadmanInput: data.breadmanInput
-
-    });
-
+        checkNum: checkNum,
+        lobbyDuration: data.lobbyDuration,
+        nightDuration: data.nightDuration,
+        dayDuration: data.dayDuration,
+        groupVoteDuration: data.groupVoteDuration,
+        
+        mafiaInput: data.mafiaInput,
+        doctorInput: data.doctorInput,
+        detectiveInput: data.detectiveInput,
+        breadmanInput: data.breadmanInput
+  
+      });
+    }
   }); 
 
 
@@ -309,8 +311,6 @@ srv.on('roleInit', function() {
   functions.initRoleAssign();
   //functions.initTeamAssign();
   console.log('fin');
-
-  var socketArray = Object.keys(io.sockets.sockets);
 
     for (i = 0; i < socketArray.length; i++) { 
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
@@ -374,7 +374,7 @@ srv.on('startVote', function(data){
   }
 }
 
-
+  var whoIAm;
 
 for (i=0; i < targetArray.length; i++) { // Create buttons
     const buttonsArray = [];
@@ -386,6 +386,9 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
 
       if (targetArray[i].socketId !== playersArray[x].socketId) {
         buttonsArray.push(functions.playersArray[x]); // Except self
+        
+      } else {
+        whoIAm = functions.playersArray[x]; // this defines who u r <3 for detective
       }
 
     }
@@ -398,7 +401,7 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
   for (y = 0; y < buttonsArray.length; y++) {
       var name = buttonsArray[y].playerName;
       var ID = buttonsArray[y].playerId;
-      playerButtons += `<button class='button' id = '${ID}' onclick='getPlayerVote()'> ${name} </button>`;
+      playerButtons += `<button class='playerButton' id = '${ID}' onclick='getPlayerVote()'> ${name} </button>`;
   }
   io.to(targetArray[i].socketId).emit('showVote', { buttonParse: playerButtons }); // Push buttons to player
 }
@@ -468,17 +471,27 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
     if (data.action == 'bread') {
 
       console.log(player.playerName + ' targeted for bread');
+      io.to().emit('showEvent', { title: 'A crumble offering...', text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, kill: false }); playersArray[i].socketId
 
     }
 
 
 
     if (data.action == 'suspect') {
-      
+      var susState = functions.isSus(player.playerRole);
+      var sus = 'unknown';
+      if (susState == true) {sus = 'You may be onto something...'}
+      else {sus = 'Nothing out of the ordinary...'}
+    
 
-      //popup here
+      if (whoIAm.socketId !== null || whoIAm.socketId !== undefined) {
+        console.log(player.playerName + ' targeted as suspect');
+        console.log(functions.isSus(player.playerRole));
+        io.to(whoIAm.socketId).emit('showEvent', { title: 'A closer look...', text: `You suspected ${player.playerName},<br>${sus}`, kill: false });
+      }
 
     }
+
 
   }
 
@@ -500,7 +513,7 @@ var deaths = false;
       console.log('killed: ' + playersArray[i].playerName);
       functions.playersKilled.push(playersArray[i])
       io.to(playersArray[i].socketId).emit('exitVote');
-      io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:` });
+      io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
       playersArray.splice(i,1);
       deaths = true;
         

@@ -88,18 +88,18 @@ p Game UI visible
     img(src='./Template.svg').shadow
 
   #groupVoteGUI.popupWindow
-    button#exitVote.exitButton X
-    p Vote Here:
+    p#voteHeading Vote here:
     .groupVoteButtons
     br
     #voteSelect
+    #confirmBtnBox
+      button#exitVote.btnBox.widthFull Lock it in
     
 
-  #gameEventGUI.popupWindow
+  #gameEventGUI.alertWindow
     button#exitEvent.exitButton X
-    h1#gameEventTitle Player Died
-    br
-    p#gameEventText Player x has died!
+    p#gameEventTitle
+    p#gameEventText
 
   button#showCardBtn Show Card
   button#showEventBtn Show Event temp
@@ -122,7 +122,6 @@ p Game UI visible
 
   button#usernameBtn.lowerBtn Username 
     #usernameIcon &#10148
-
 
 p Public Chat:
 #chatConsole

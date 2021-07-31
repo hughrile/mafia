@@ -246,7 +246,9 @@ socket.on('showEvent', function(data){
     gameEventTitle.innerHTML = data.title;
     gameEventText.innerHTML = data.text;
     gameEventGUI.style.visibility= 'visible';
-    header.innerHTML = 'You are a spectator'
+    if (data.kill == true) { // fires if this event kills the player
+        header.innerHTML = 'You are a spectator'
+    }
 })
 
 
