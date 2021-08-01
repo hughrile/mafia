@@ -617,6 +617,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     // Hide voting window every round
     for (i = 0; i < playersArray.length; i++) { // close voting for all players
       io.to(playersArray[i].socketId).emit('exitVote');
+      io.to(playersArray[i].socketId).emit('exitEvent');
     }
 
 

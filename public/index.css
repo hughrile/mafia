@@ -36,7 +36,11 @@ p {
   color: rgb(255, 255, 255);
   margin: 0;
 }
-
+/*
+li {
+  margin: 2px;
+}
+*/
 img {
     width: 100%;
     height: auto;
@@ -212,10 +216,11 @@ fancybuttons {
 .playerButton {
   margin: 10px;
   height: 32px;
+  font-family: var(--fontMain);
   font-weight: 400;
   width: max-content;
   padding: 0 10px;
-  max-width: 120px;
+  max-width: 100px;
   border-style: none;
   outline-style: none;
   border-radius: 3px;
@@ -430,21 +435,35 @@ fancybuttons {
 
 #player-listBox {
  background-color: teal;
- font-size: 10px;
  margin: 20px;
  padding: 4px;
  height: auto;
- width: 80px;
+ width: 140px;
+}
+
+#player-listTitle {
+  font-size: 18px;
+  font-weight: 900;
+  margin: 4px;
 }
 
 #player-list {
   list-style: none;
   font-style: bold;
-  background-color: white;
-  padding: 10px;
+  font-family: var(--fontMain);
+  font-size: 16px;
+  font-weight: 900;
+  background-color: rgba(255, 255, 255, 1);
+  padding: 1px;
   margin: 0;
   width: auto;
-  font-size: larger;
+  height: auto;
+}
+
+.player-listItem {
+  margin: 6px;
+  /*background-color: rgba(64, 214, 97, 0.4);*/
+  padding: 2px;
 }
 
 

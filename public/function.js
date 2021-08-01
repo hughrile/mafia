@@ -369,7 +369,7 @@ function playerListUpdate() {
         var vote = playersArray[i].playerVotes;
 
         if (vote === undefined || vote === null) {
-            playerList += `<li> ${name} </li>`;
+            playerList += `<li class='player-listItem'> ${name} </li>`;
         } else
         playerList += `<li> ${name} - <span class='votes'>${vote}</span> </li>`;
     }
