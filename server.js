@@ -63,6 +63,7 @@ io.on('connection', socket => { // connection start
     functions.userCreate(socket.id);
     socketArray.push(socket.id);
     io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
+    
 
     if (serverHost === undefined || serverHost === '') { // first player becomes host
       serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
@@ -79,6 +80,7 @@ io.on('connection', socket => { // connection start
 
     console.log(`Spectator connected`);
     spectatorTotal++
+    // push number of specs to app.js?
     io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
 
   }
@@ -192,6 +194,30 @@ io.on('connection', socket => { // connection start
   });
 
 
+  socket.on('chatroomsVerify', function(data){ // client to server then server responds with verification
+
+    if (allowPlayers === false) {
+      playerRooms = functions.chatroomsGet(socket.id); // get current room access
+      var roomExpected = playerRooms[`${data.btnClicked}`]; // get room allowed
+      var roomAttempted = data.key;                    // get room attempted
+  
+      if (roomExpected == roomAttempted) {
+        status = true;
+      } else {
+        status = false; // reject any unexpected selections
+      }
+  
+      console.log(playerRooms);
+      console.log(roomExpected);
+  
+      socket.emit('chatroomsVerify', {
+        verified: status
+      })
+
+    }
+  });
+
+
 
 
   socket.on('userSubmit', function(data){
@@ -218,13 +244,13 @@ io.on('connection', socket => { // connection start
       socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
-    } else {
+    } /*else {
       // Create new player
       console.log(`Does not exist yet, something is broken :(`);
       console.log(socketArray.length);
       functions.userCreate(socket.id);
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-    }
+    }*/
 
 /*
     io.sockets.emit('chat', { message: functions.userCreate(socketArray[socketExists()], data.user) }); // use this to update name of existing player instead of just creating one
@@ -310,9 +336,8 @@ srv.on('roleInit', function() {
   functions.fillCivilians();
   functions.initRoleAssign();
   //functions.initTeamAssign();
-  console.log('fin');
 
-    for (i = 0; i < socketArray.length; i++) { 
+    for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
       io.to(player.socketId).emit('roleInit', {
         name: player.playerName,
@@ -321,6 +346,19 @@ srv.on('roleInit', function() {
     }
 
 });
+
+srv.on('chatroomsInit', function() {
+  for (i = 0; i < socketArray.length; i++) { 
+  socket = playersArray[functions.getPlayerBySocket(socketArray[i])].socketId;
+  playerRooms = functions.chatroomsGet(socket);
+
+  io.to(socket).emit('chatroomsUpdate', {
+    playerRooms: playerRooms
+  });
+
+ }
+});
+
 
 srv.on('timerStart', function(data){// update timers once immediately
   var phase = (data.phase);
@@ -519,7 +557,7 @@ var deaths = false;
         
     }
 
-    if (playersArray[i] !== null && playersArray[i] !== undefined) {
+    if (playersArray[i] !== null && playersArray[i] !== undefined) { // clears all votes to kill / protect
       console.log(playersArray[i].playerName + 'cleared');
       playersArray[i].killTarget = false;
       playersArray[i].protectTarget = false;
@@ -595,8 +633,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
       allowPlayers = false;
       console.log('end of lobby, allowPlayers now false');
       srv.emit(`roleInit`); // 
-
-      
+      srv.emit(`chatroomsInit`);
 
     } else if (data.phase.phaseName == 'night'){
       

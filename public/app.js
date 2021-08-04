@@ -49,6 +49,12 @@ var doctorInput = document.getElementById('doctorInput');
 var detectiveInput = document.getElementById('detectiveInput');
 var breadmanInput = document.getElementById('breadmanInput');
 
+// chatroom buttons DOM
+var chatroomBtnBox = document.getElementById('chatroomBtnBox');
+var chatroomBtnMain = document.getElementById('chatroomBtnMain');
+var chatroomBtnRole = document.getElementById('chatroomBtnRole');
+var chatroomBtnPlus = document.getElementById('chatroomBtnPlus');
+const chatroomBtnArray = [chatroomBtnMain, chatroomBtnRole, chatroomBtnPlus];
 
 //Popups
 
@@ -146,6 +152,46 @@ socket.on('getVote', function(){ // on server request, send the votes
         vote: voteSelect.innerHTML
     });
 });
+
+
+
+
+// display buttons
+
+socket.on('chatroomsUpdate', function(data){
+    var visibility;
+    for (i = 0; i < data.playerRooms.length; i++) {
+        if (data.playerRooms[i] === '') {
+            visibility = 'hidden'
+        } else {
+            chatroomBtnArray[i].innerHTML = data.playerRooms[i]; // update text to button name
+            visibility = 'visible';
+        }
+        chatroomBtnArray[i].style.visibility = visibility;
+    }
+});
+
+// on button clicks
+for (i = 0; i < chatroomBtnArray.length; i++) {
+    chatroomBtnArray[i].addEventListener('click', function(){
+        var btn = i;
+        socket.emit('chatroomsVerify', {
+            btnClicked: btn,
+            key: chatroomBtnArray[i]
+        })
+    });
+}
+
+// on verification of chatroom button
+
+socket.on('chatroomsVerify', function(data){
+        if (data.verified == true) { // verify permission to access this button
+            console.log('detected a button click as expected')
+        } else {
+            console.log('detected an unexpected button click')
+        }
+})
+
 
 
 
