@@ -196,20 +196,23 @@ io.on('connection', socket => { // connection start
 
   socket.on('chatroomsVerify', function(data){ // client to server then server responds with verification
 
+    //console.log(data.index);
+
+
     if (allowPlayers === false) {
       playerRooms = functions.chatroomsGet(socket.id); // get current room access
-      var roomExpected = playerRooms[`${data.btnClicked}`]; // get room allowed
-      var roomAttempted = data.key;                    // get room attempted
-  
-      if (roomExpected == roomAttempted) {
+      var roomTrigger = playerRooms[`${data.index}`]; // get room allowed      
+
+      if (roomTrigger !== '') {
         status = true;
       } else {
         status = false; // reject any unexpected selections
       }
   
       console.log(playerRooms);
-      console.log(roomExpected);
-  
+      console.log(roomTrigger);
+      console.log(status);
+
       socket.emit('chatroomsVerify', {
         verified: status
       })
@@ -352,7 +355,7 @@ srv.on('chatroomsInit', function() {
   socket = playersArray[functions.getPlayerBySocket(socketArray[i])].socketId;
   playerRooms = functions.chatroomsGet(socket);
 
-  io.to(socket).emit('chatroomsUpdate', {
+  io.to(socket).emit('chatroomsInit', {
     playerRooms: playerRooms
   });
 

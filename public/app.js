@@ -51,10 +51,10 @@ var breadmanInput = document.getElementById('breadmanInput');
 
 // chatroom buttons DOM
 var chatroomBtnBox = document.getElementById('chatroomBtnBox');
-var chatroomBtnMain = document.getElementById('chatroomBtnMain');
-var chatroomBtnRole = document.getElementById('chatroomBtnRole');
-var chatroomBtnPlus = document.getElementById('chatroomBtnPlus');
-const chatroomBtnArray = [chatroomBtnMain, chatroomBtnRole, chatroomBtnPlus];
+var chatroomBtn0 = document.getElementById('chatroomBtn0');
+var chatroomBtn1 = document.getElementById('chatroomBtn1');
+var chatroomBtn2 = document.getElementById('chatroomBtn2');
+const chatroomBtnArray = [chatroomBtn0, chatroomBtn1, chatroomBtn2];
 
 //Popups
 
@@ -158,7 +158,7 @@ socket.on('getVote', function(){ // on server request, send the votes
 
 // display buttons
 
-socket.on('chatroomsUpdate', function(data){
+socket.on('chatroomsInit', function(data){
     var visibility;
     for (i = 0; i < data.playerRooms.length; i++) {
         if (data.playerRooms[i] === '') {
@@ -171,28 +171,40 @@ socket.on('chatroomsUpdate', function(data){
     }
 });
 
+/*
 // on button clicks
 for (i = 0; i < chatroomBtnArray.length; i++) {
     chatroomBtnArray[i].addEventListener('click', function(){
-        var btn = i;
+        key = chatroomBtnArray[i].innerHTML;
         socket.emit('chatroomsVerify', {
-            btnClicked: btn,
-            key: chatroomBtnArray[i]
+            key: key
         })
     });
 }
+*/
 
-// on verification of chatroom button
+// Chat button generator
+for (i=0; i < chatroomBtnArray.length; i++) {
+    document.getElementById("chatroomBtn"+i).addEventListener('click', (function(){
+        var index = i;
+        return function() {
+            socket.emit('chatroomsVerify', {
+                index: index
+            })
+        }
+    })());
+}
 
+
+
+// on verification of chatroom button (clientside response module)
 socket.on('chatroomsVerify', function(data){
         if (data.verified == true) { // verify permission to access this button
-            console.log('detected a button click as expected')
+            console.log('detected a button click as expected') // hide current chatroom, display the new chatroom 
         } else {
-            console.log('detected an unexpected button click')
+            console.log('detected an unexpected button click') // refresh user's buttons as they should be, maybe later add a cheating log
         }
 })
-
-
 
 
 // Listen for events

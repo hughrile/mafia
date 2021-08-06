@@ -127,9 +127,9 @@ p Game UI visible
 br
 br
 #chatroomBtnBox
-  button#chatroomBtnMain Main
-  button#chatroomBtnRole Role
-  button#chatroomBtnPlus Plus
+  button#chatroomBtn0 Main
+  button#chatroomBtn1 Role
+  button#chatroomBtn2 Plus
 
 p Public Chat:
 #chatConsole
@@ -137,6 +137,9 @@ p Public Chat:
     #chatConsoleOutput
   input#chatConsoleMessage(type='text' placeholder='Message')
   button#chatConsoleSend Send
+
+
+
 script(src='./function.js')
 script(src='./app.js')
 script(src='/socket.io/socket.io.js')
