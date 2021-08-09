@@ -441,6 +441,19 @@ fancybuttons {
 }
 */
 
+#chatroomBtn0 {
+  visibility: hidden;
+}
+
+#chatroomBtn1 {
+  visibility: hidden;
+}
+
+#chatroomBtn2 {
+  visibility: hidden;
+}
+
+
 #cardUI {
     position: fixed;
     top: 50%;

@@ -162,7 +162,7 @@ io.on('connection', socket => { // connection start
       player.playerVotesFor = data.vote;
       
 
-      console.log('playerVote updated to:' + player.playerVotesFor);
+      // console.log('playerVote updated to:' + player.playerVotesFor);
     }
 
       socket.emit('exitVote') // validation
@@ -209,8 +209,8 @@ io.on('connection', socket => { // connection start
         status = false; // reject any unexpected selections
       }
   
-      console.log(playerRooms);
-      console.log(roomTrigger);
+      // console.log(playerRooms);
+      // console.log(roomTrigger);
       console.log(status);
 
       socket.emit('chatroomsVerify', {
@@ -452,7 +452,8 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
   // set time out phase duration to gather results and enact event
 
   voteTimeOut = setTimeout(function(){
-    // push votes into an array and refresh vote object
+
+    // push votes into an array and refresh the vote property
 
     for (i = 0; i < targetArray.length; i++) {
       var playerVote = targetArray[i].playerVotesFor;
@@ -462,18 +463,52 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
       }
     }   
 
+
+
+
+
+
+
+
+
+
+
+    // take the vote array and handle the data
+
     var voteMode = functions.getMode(votesArray);
 
+    //console.log(votesArray);
 
-    if (votesArray === undefined || votesArray === null) { // no votes
+    if (votesArray.length == 0) { // no votes
       console.log('no votes received');
-      return;
+      return; // do nothing because there's nothing to do
+
     } else if (voteMode >= 0 && voteMode.length == 1) { // modal vote
 
-
-      console.log('target ' + voteMode);
+      //console.log('target ' + voteMode);
 
     } else if (voteMode.length > 1) { // multimodal vote
+      console.log('multimodal');
+
+      // group vote logic
+
+      // clear timeout on voting phase
+      // update timer to revote time
+      // start revote timer
+      // start new vote with only the multiple modes available to same targetted voters
+      // if modal, same action but to the new mode
+      // if multimodal, 
+
+
+      // role based logic (mafia / doctor / infected)
+
+      // clear timeout on voting phase
+      // update timer to revote time
+      // start revote timer
+      // start new vote with only the multiple modes available to same targetted voters
+      // if modal, same action but to the new mode
+      // if multimodal, 
+
 
       return;
 /*
@@ -512,7 +547,7 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
     if (data.action == 'bread') {
 
       console.log(player.playerName + ' targeted for bread');
-      io.to().emit('showEvent', { title: 'A crumble offering...', text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, kill: false }); playersArray[i].socketId
+      io.to(playersArray[i].socketId).emit('showEvent', { title: 'A crumble offering...', text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, kill: false });
 
     }
 
@@ -657,7 +692,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     // Hide voting window every round
     for (i = 0; i < playersArray.length; i++) { // close voting for all players
       io.to(playersArray[i].socketId).emit('exitVote');
-      io.to(playersArray[i].socketId).emit('exitEvent');
+      //io.to(playersArray[i].socketId).emit('exitEvent'); closes bread message instantly :(
     }
 
 
