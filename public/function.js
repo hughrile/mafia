@@ -89,8 +89,16 @@ var Vote = new Phase( // Vote.phaseName = `vote`
     3
     );
 
+var Revote = new Phase( // Vote.phaseName = `vote`
+    'revote', 
+    `revoting Time`, 
+    `A vote was tied! Try again`, 
+    15, 
+    4
+    );
+
 // Push phase objects into phaseArray
-phaseArray.push(Lobby, Night, Day, Vote);
+phaseArray.push(Lobby, Night, Day, Vote, Revote);
 
 
 const Role = class { // class for storing role information
