@@ -360,13 +360,13 @@ srv.on('roleInit', function() {
 
 srv.on('chatroomsInit', function() {
   for (i = 0; i < socketArray.length; i++) { 
-  socket = playersArray[functions.getPlayerBySocket(socketArray[i])].socketId;
-  playerRooms = functions.chatroomsGet(socket);
-
-  io.to(socket).emit('chatroomsInit', {
+  socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  playerRooms = functions.chatroomsGet(socket.socketId);
+  if (socket !== undefined && socket !== null) {
+  io.to(socket.socketId).emit('chatroomsInit', {
     playerRooms: playerRooms
   });
-
+  }
  }
 });
 
@@ -493,7 +493,7 @@ if (data.phase.phaseName == 'revote') {
 
       for (y=0; y < revoteMode.length; y++) { 
         if (revoteMode[y] == playersArray[x].playerId) {
-          
+
           buttonsArray.push(playersArray[x]); // If player is a revote mode then push into buttons array
         }
       }
@@ -542,16 +542,65 @@ if (data.phase.phaseName == 'revote') {
 
     var voteMode = functions.getMode(votesArray);
 
+/*
+    vote
 
-    // do an if statement for previous round being a revote?
+      if mode more than 1
+      trigger revote
 
-    if (voteMode.length > 1) { // multimodal vote
-      console.log('revote started');
+    revote
+
+      mode more than 1
+      if 'all' do else do
+
+  mode is 1
+  treat normally
+
+
+
+    if (data.target == 'all') { // Get players in array
+    console.log('vote targetting all');
+    for (i=0; i < playersArray.length; i++) {
+    targetArray.push(functions.playersArray[i]);
+  }
+
+
+} else  {
+  console.log(`vote targetting ${data.target}`);
+  for (i=0; i < playersArray.length; i++) {
+    if (playersArray[i].playerRole == data.target) {
+    targetArray.push(functions.playersArray[i]);
+    }
+  }
+}
+
+
+*/
+
+    if (voteMode.length > 1 && data.phase.phaseName == 'revote') { // multimodal revote logic
+
+      if (data.target == 'all') {
+        console.log('revote targetting all');
+        // skip the vote
+        console.log('skipped the vote group revote');
+        return;
+      } else {
+        console.log(`vote targetting ${data.target}`);
+        // select random of revoteMode array
+      }
+      
+    }
+
+
+    if (voteMode.length > 1 && data.phase.phaseName !== 'revote') { // multimodal vote
+      console.log(data.phase.phaseName);
+
+      
 
       srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type], modes: voteMode }); // Start a revote (also parse through values in an array)
 
       return;
-    } else {
+    } else { // turn this into a function to call at the end of multimodal revote logic
       
       var player = playersArray[functions.getPlayerById(voteMode)];
 
@@ -569,7 +618,7 @@ if (data.phase.phaseName == 'revote') {
         kill: false });
     }
 
-    if (data.action == 'suspect') {
+    if (data.action == 'suspect') { 
       var susState = functions.isSus(player.playerRole);
       var sus = 'unknown';
       if (susState == true) {sus = 'You may be onto something...'}
@@ -584,7 +633,7 @@ if (data.phase.phaseName == 'revote') {
           kill: false });
       }
     }
-  }
+  } 
 }
   }, data.phase.phaseDuration*1000); // after this long
 }); 
@@ -597,7 +646,6 @@ var deaths = false;
 
   for (i = 0; i < playersArray.length; i++) {
     
-
     if (playersArray[i].killTarget == true && playersArray[i].protectTarget == false) {
 
       console.log('killed: ' + playersArray[i].playerName);
@@ -615,8 +663,6 @@ var deaths = false;
       playersArray[i].protectTarget = false;
 
     }
-
-
   }
 
   if (deaths == false) {
@@ -624,8 +670,6 @@ var deaths = false;
   }
 
   io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-
-
 });
 
 
