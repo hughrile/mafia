@@ -27,7 +27,7 @@ var roundNumber = 1;
 var maxRounds = 50; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
-var socketArray = [] // global sockets array
+var socketArray = []; // global sockets array
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -79,7 +79,7 @@ io.on('connection', socket => { // connection start
   } else { // Connect as spectator
 
     console.log(`Spectator connected`);
-    spectatorTotal++
+    spectatorTotal++;
     // push number of specs to app.js?
     io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
 
@@ -329,11 +329,14 @@ srv.on('phaseStart', function(data){ // functions.Night.phaseText || (phaseName,
 
   var revoteValues = ['','',''];
     if (data.rVvals !== ['','',''])      {revoteValues = data.rVvals} // If revote values are specified, update them
+  
+  var voteMode = [''];
+    if (data.modes !== [''])      {voteMode = data.modes}
 
   var phase = data.phase;
 
   srv.emit('timerStart',  { phase: phase });
-  srv.emit('phaseEnd',    { phase: phase, rVvals: revoteValues });
+  srv.emit('phaseEnd',    { phase: phase, rVvals: revoteValues, modes: voteMode });
 
 });
 
@@ -345,10 +348,12 @@ srv.on('roleInit', function() {
 
     for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
+      if (player !== undefined && player !== null) {
       io.to(player.socketId).emit('roleInit', {
         name: player.playerName,
         role: player.playerRole
-      });
+      });        
+      }
     }
 
 });
@@ -386,29 +391,13 @@ srv.on('timerStart', function(data){// update timers once immediately
       time = (phase.phaseDuration);
       return;
   } else
-    time -=1
+    time -=1;
     io.sockets.emit('timerUpdate', {
       timeLeft: time,
       phaseTitle: phase.phaseTitle
     });
   }, 1000);
 });
-
-srv.on('reVote', function(data){
-
-    console.log('REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-
-  // clear timeouts
-  /*
-  clearTimeout(phaseTimer);
-  clearTimeout(phaseTimeOut);
-  clearTimeout(voteTimeOut);
-  */
-  // update timer to revote time (duration)
-
-  //var duration = 
-
-
 
   // start revote timer
 
@@ -446,13 +435,6 @@ srv.on('reVote', function(data){
 
 
 
-
-
-// revote function, triggers if there are any multimodal votes
-
-  // srv.emit(`startVote`, { phase: data.phase, target: data.target, action: data.action, type: data.type }); // type: groupVote
-});
-
 srv.on('startVote', function(data){
 
   if (data.target !== 'all') { // if custom role is not in the game currently, don't send or action a vote.
@@ -460,11 +442,14 @@ srv.on('startVote', function(data){
       return;
     }
   }
-  
+
+  var whoIAm;
+  if (data.modes !== [''])      {var revoteMode = data.modes}
   
   // Create target array
   const targetArray = [];
   const votesArray = [];
+
 
   if (data.target == 'all') { // Get players in array
     console.log('vote targetting all');
@@ -482,36 +467,60 @@ srv.on('startVote', function(data){
   }
 }
 
-  var whoIAm;
-
-for (i=0; i < targetArray.length; i++) { // Create buttons
-    const buttonsArray = [];
-  for (x=0; x < playersArray.length; x++) { // put players into a buttons array
-
-    if (data.target == 'doctor') {
-      buttonsArray.push(functions.playersArray[x]); // All players
-    } else {
-
-      if (targetArray[i].socketId !== playersArray[x].socketId) {
-        buttonsArray.push(functions.playersArray[x]); // Except self
-        
-      } else {
-        whoIAm = functions.playersArray[x]; // this defines who u r <3 for detective
-      }
-
-    }
-    
 
 
-  }
 
+
+var getButtonsFromArray = function(buttonsArray) {
   var playerButtons = '';
   for (y = 0; y < buttonsArray.length; y++) {
       var name = buttonsArray[y].playerName;
       var ID = buttonsArray[y].playerId;
       playerButtons += `<button class='playerButton' id = '${ID}' onclick='getPlayerVote()'> ${name} </button>`;
+  }    
+  return playerButtons;
+}
+
+
+if (data.phase.phaseName == 'revote') {
+
+  console.log(revoteMode); //testing latest
+
+  for (i=0; i < targetArray.length; i++) { // Create button
+    const buttonsArray = [];
+  
+    for (x=0; x < playersArray.length; x++) { // put players into a buttons array
+
+      for (y=0; y < revoteMode.length; y++) { 
+        if (revoteMode[y] == playersArray[x].playerId) {
+          buttonsArray.push(playersArray[y]); // If player is a revote mode then push into buttons array
+        }
+      }
+    }
+    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
   }
-  io.to(targetArray[i].socketId).emit('showVote', { buttonParse: playerButtons }); // Push buttons to player
+
+} else {
+
+  for (i=0; i < targetArray.length; i++) { // Create button
+  const buttonsArray = [];
+
+    for (x=0; x < playersArray.length; x++) { // put players into a buttons array
+
+      if (data.target == 'doctor') {
+        buttonsArray.push(functions.playersArray[x]); // All players
+      } else {
+
+        if (targetArray[i].socketId !== playersArray[x].socketId) {
+          buttonsArray.push(functions.playersArray[x]); // Except self
+          
+        } else {
+          whoIAm = functions.playersArray[x]; // this defines who u r <3 for detective
+        }
+      }
+    }
+    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
+  }
 }
 
 
@@ -528,28 +537,17 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
         votesArray.push(playerVote);
         targetArray[i].playerVotesFor = '';
       }
-    }   
-
-
-
-
-
-
-
-
-
-
-
-    // take the vote array and handle the data
+    }
 
     var voteMode = functions.getMode(votesArray);
 
-    //console.log(votesArray);
+
+    // do an if statement for previous round being a revote?
 
     if (voteMode.length > 1) { // multimodal vote
       console.log('revote started');
 
-      srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type] }); // Start a revote (also parse through values in an array)
+      srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type], modes: voteMode }); // Start a revote (also parse through values in an array)
 
       return;
     } else {
@@ -559,25 +557,15 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
 
     if (player !== undefined && player !== null) {
 
-    if (data.action == 'kill') {
-      
-      player.killTarget = true;
-      console.log(player.playerName + ' targeted for death');
+    if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
 
-    }
+    if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
 
-    if (data.action == 'protect') {
-
-      player.protectTarget = true;
-      console.log(player.playerName + ' targeted for protection');
-
-    }
-
-    if (data.action == 'bread') {
-
-      console.log(player.playerName + ' targeted for bread');
-      io.to(playersArray[i].socketId).emit('showEvent', { title: 'A crumble offering...', text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, kill: false });
-
+    if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
+      io.to(playersArray[i].socketId).emit('showEvent', { 
+        title: 'A crumble offering...', 
+        text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
+        kill: false });
     }
 
     if (data.action == 'suspect') {
@@ -589,7 +577,10 @@ for (i=0; i < targetArray.length; i++) { // Create buttons
       if (whoIAm.socketId !== null || whoIAm.socketId !== undefined) {
         console.log(player.playerName + ' targeted as suspect');
         console.log(functions.isSus(player.playerRole));
-        io.to(whoIAm.socketId).emit('showEvent', { title: 'A closer look...', text: `You suspected ${player.playerName},<br>${sus}`, kill: false });
+        io.to(whoIAm.socketId).emit('showEvent', {
+          title: 'A closer look...',
+          text: `You suspected ${player.playerName},<br>${sus}`,
+          kill: false });
       }
     }
   }
@@ -641,27 +632,23 @@ var deaths = false;
 srv.on('phaseEnd', function(data){ // on phase end wait x time then start next phase
 // use the data.phase for current phase otherwise assume it's next phase
 
-  //var revoteValues = ['','',''];
     if (data.rVvals !== ['','',''])      { var revoteValues = data.rVvals } // If revote values are specified, update them
+    if (data.modes !== [''])      {var voteMode = data.modes}
+
+    
 
   // Execute specific code on phase start.
 
   if (data.phase.phaseName == 'revote') { // either it's a revote or it's a standard.
-    /*
-    console.log(data.phase.phaseDuration); // Revote duration
-    console.log(revoteValues[0]); // target
-    console.log(revoteValues[1]); // action
-    console.log(revoteValues[2]); // type
-    */
 
-    // still need to configure only pushing the modes from previous vote as the buttons for this vote.
+    for (i = 0; i < playersArray.length; i++) {
+    io.to(playersArray[i].socketId).emit('exitVote'); // clear residual votes (not actioned)
+    }
 
-    srv.emit(`startVote`, { phase: data.phase, target: revoteValues[0], action: revoteValues[1], type: revoteValues[2] }); // revote voting triggered using orginal variables
+    srv.emit(`startVote`, { phase: data.phase, target: revoteValues[0], action: revoteValues[1], type: revoteValues[2], modes: voteMode }); // revote voting triggered using orginal variables
 
 
   } else if (data.phase.phaseName == 'lobby') {
-    
-    
 
   } else if (data.phase.phaseName == 'night') { // for loop through the roles object instead of listing them here?
 
@@ -672,8 +659,6 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
   } else if (data.phase.phaseName == 'day') {
 
-    //srv.emit('actionVote', {}); // action night votes  
-
   } else if (data.phase.phaseName == 'vote') {
 
     srv.emit(`startVote`, { phase: data.phase, target: 'all', action: 'kill', type: 'group' }); // type: groupVote
@@ -682,11 +667,6 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
   }
 
     
-
-
-
-
-
     clearTimeout(phaseTimeOut); // clearTimeout init
   phaseTimeOut = setTimeout(function(){
     clearTimeout(phaseTimeOut); // clearTimeout complete
@@ -705,8 +685,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
     } else if (data.phase.phaseName == 'night'){
       
-      srv.emit('actionVote', {}); // action night vote  
-      console.log('VOTE ACTIONS');
+      srv.emit('actionVote', {}); // action night vote
 
     } else if (data.phase.phaseName == 'day'){
       
@@ -714,8 +693,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
     } else if (data.phase.phaseName == 'vote'){
      
-      srv.emit('actionVote', {}); // action group vote  
-      console.log('VOTE ACTIONS');
+      srv.emit('actionVote', {}); // action group vote 
 
     }
 
@@ -729,8 +707,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
     if (data.phase.phaseName == 'revote') { // revote end
 
-      srv.emit('actionVote', {}); // action group vote  
-      console.log('VOTE ACTIONS2');
+      srv.emit('actionVote', {}); // action group vote
 
       console.log('revote ended');
     }
