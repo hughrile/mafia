@@ -493,7 +493,8 @@ if (data.phase.phaseName == 'revote') {
 
       for (y=0; y < revoteMode.length; y++) { 
         if (revoteMode[y] == playersArray[x].playerId) {
-          buttonsArray.push(playersArray[y]); // If player is a revote mode then push into buttons array
+          
+          buttonsArray.push(playersArray[x]); // If player is a revote mode then push into buttons array
         }
       }
     }
