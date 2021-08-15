@@ -443,7 +443,6 @@ srv.on('startVote', function(data){
     }
   }
 
-  var whoIAm;
   if (data.modes !== [''])      {var revoteMode = data.modes}
   
   // Create target array
@@ -469,7 +468,43 @@ srv.on('startVote', function(data){
 
 
 
+var actionTrigger = function(voteVar, playerSelf) {
+  
+  var player = playersArray[functions.getPlayerById(voteVar)];
 
+  // console.log('testing action = '+ data.action);
+
+  if (player !== undefined && player !== null) {
+
+  if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
+
+  if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
+
+  if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
+    io.to(player.socketId).emit('showEvent', { 
+      title: 'A crumble offering...', 
+      text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
+      kill: false });
+  }
+
+  if (data.action == 'suspect') { 
+    var susState = functions.isSus(player.playerRole);
+    var sus = 'unknown';
+    if (susState == true) {sus = 'You may be onto something...'}
+    else {sus = 'Nothing out of the ordinary...'}
+  
+
+    console.log(player.playerName + ' targeted as suspect');
+    console.log(functions.isSus(player.playerRole));
+    console.log(playerSelf.socketId + ' id');
+    io.to(playerSelf.socketId).emit('showEvent', {
+      title: 'A closer look...',
+      text: `You suspected ${player.playerName},<br>${sus}`,
+      kill: false });
+
+    }
+  } 
+}
 
 var getButtonsFromArray = function(buttonsArray) {
   var playerButtons = '';
@@ -484,7 +519,7 @@ var getButtonsFromArray = function(buttonsArray) {
 
 if (data.phase.phaseName == 'revote') {
 
-  console.log(revoteMode); //testing latest
+  // console.log(revoteMode); //testing latest
 
   for (i=0; i < targetArray.length; i++) { // Create button
     const buttonsArray = [];
@@ -515,8 +550,6 @@ if (data.phase.phaseName == 'revote') {
         if (targetArray[i].socketId !== playersArray[x].socketId) {
           buttonsArray.push(functions.playersArray[x]); // Except self
           
-        } else {
-          whoIAm = functions.playersArray[x]; // this defines who u r <3 for detective
         }
       }
     }
@@ -532,110 +565,69 @@ if (data.phase.phaseName == 'revote') {
 
     // push votes into an array and refresh the vote property
 
-    for (i = 0; i < targetArray.length; i++) {
-      var playerVote = targetArray[i].playerVotesFor;
-      if (playerVote !== '' && playerVote !== undefined) {
-        votesArray.push(playerVote);
-        targetArray[i].playerVotesFor = '';
+    // w-hoiam breaks on group votes as it is trying to define multiple targets to the value then doing .socketid is not a property of all the targets as an array
+
+    if (data.type == 'group') { // group vote system. shared votes array with a votemode variable to decide logic
+
+      for (i = 0; i < targetArray.length; i++) {
+        var playerVote = targetArray[i].playerVotesFor;
+        if (playerVote !== '' && playerVote !== undefined) {
+          votesArray.push(playerVote);
+          targetArray[i].playerVotesFor = '';
+        }
       }
-    }
 
-    var voteMode = functions.getMode(votesArray);
-
-/*
-    vote
-
-      if mode more than 1
-      trigger revote
-
-    revote
-
-      mode more than 1
-      if 'all' do else do
-
-  mode is 1
-  treat normally
+      var voteMode = functions.getMode(votesArray, '');
 
 
+      if (voteMode.length > 1 && data.phase.phaseName == 'revote') { // multimodal revote logic
 
-    if (data.target == 'all') { // Get players in array
-    console.log('vote targetting all');
-    for (i=0; i < playersArray.length; i++) {
-    targetArray.push(functions.playersArray[i]);
-  }
-
-
-} else  {
-  console.log(`vote targetting ${data.target}`);
-  for (i=0; i < playersArray.length; i++) {
-    if (playersArray[i].playerRole == data.target) {
-    targetArray.push(functions.playersArray[i]);
-    }
-  }
-}
+        if (data.target == 'all') {
+          console.log('revote targetting all');
+          // skip the vote
+          console.log('skipped the vote group revote');
+          return;
+        } else {
+          console.log(`vote targetting ${data.target}`);
+          // select random of revoteMode array
+        }
+        
+      }
 
 
-*/
-
-    if (voteMode.length > 1 && data.phase.phaseName == 'revote') { // multimodal revote logic
-
-      if (data.target == 'all') {
-        console.log('revote targetting all');
-        // skip the vote
-        console.log('skipped the vote group revote');
+      if (voteMode.length > 1 && data.phase.phaseName !== 'revote') { // multimodal vote
+        console.log(data.phase.phaseName);
+        srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type], modes: voteMode }); // Start a revote (also parse through values in an array)
         return;
-      } else {
-        console.log(`vote targetting ${data.target}`);
-        // select random of revoteMode array
+
+      } else { // turn this into a function to call at the end of multimodal revote logic
+        console.log('testing '+ voteMode);
+        if (voteMode.length == 1){
+          actionTrigger(voteMode, targetArray[i]);
+        } else {
+          console.log('triggered action filter');
+        }
+        
       }
-      
-    }
 
+    } else if (data.type == 'single') { // single vote system. for each player in target array loop the logic for a vote to trigger (seperate variable values and results)
 
-    if (voteMode.length > 1 && data.phase.phaseName !== 'revote') { // multimodal vote
-      console.log(data.phase.phaseName);
+      console.log('single type triggered')
 
-      
-
-      srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type], modes: voteMode }); // Start a revote (also parse through values in an array)
-
-      return;
-    } else { // turn this into a function to call at the end of multimodal revote logic
-      
-      var player = playersArray[functions.getPlayerById(voteMode)];
-
-
-    if (player !== undefined && player !== null) {
-
-    if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
-
-    if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
-
-    if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
-      io.to(playersArray[i].socketId).emit('showEvent', { 
-        title: 'A crumble offering...', 
-        text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
-        kill: false });
-    }
-
-    if (data.action == 'suspect') { 
-      var susState = functions.isSus(player.playerRole);
-      var sus = 'unknown';
-      if (susState == true) {sus = 'You may be onto something...'}
-      else {sus = 'Nothing out of the ordinary...'}
-    
-      if (whoIAm.socketId !== null || whoIAm.socketId !== undefined) {
-        console.log(player.playerName + ' targeted as suspect');
-        console.log(functions.isSus(player.playerRole));
-        io.to(whoIAm.socketId).emit('showEvent', {
-          title: 'A closer look...',
-          text: `You suspected ${player.playerName},<br>${sus}`,
-          kill: false });
+      for (i=0; i < targetArray.length; i++) { // get player's vote
+        var voteSelection;
+        var playerVote = targetArray[i].playerVotesFor;
+        if (playerVote !== '' && playerVote !== undefined) {
+          voteSelection = playerVote;
+          targetArray[i].playerVotesFor = '';
+        }
+        actionTrigger(voteSelection, targetArray[i]); // action player's choice
       }
+
     }
+
   } 
-}
-  }, data.phase.phaseDuration*1000); // after this long
+, data.phase.phaseDuration*1000); // after this long
 }); 
 
 
@@ -745,7 +737,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     // Hide voting window every round
     for (i = 0; i < playersArray.length; i++) { // close voting for all players
       io.to(playersArray[i].socketId).emit('exitVote');
-      io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
+      // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
     }
 
     // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
