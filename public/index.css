@@ -44,8 +44,8 @@
 }
 
 .container { /* grid */
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   display: grid;
   grid-gap: 0px;
   grid-template-columns: [main-start taskbar-start] 1fr 1fr 1fr [taskbar-end main-end];
@@ -89,7 +89,7 @@ body {
   height: calc(100% - 16px);
   margin: 8px;
   background-color: #1D1D1D;
-  border-radius: 6px;
+  border-radius: 14px;
 }
 
 #boxTasks {
@@ -98,7 +98,7 @@ body {
   margin: 8px;
   margin-top: 0;
   background-color: #1D1D1D;
-  border-radius: 6px;
+  border-radius: 14px;
 }
 
 
@@ -345,18 +345,6 @@ label {
   height: 36px;
   padding: 3px;
 }
-
-
-
-/* Individual Elements 
-
-#titleText {
-  font-family: 'Teko', sans-serif;
-  font-style: bold;
-  font-weight: 600;
-  color: white;
-  font-size: 10vw;
-}*/
 
 #titleBox {
   width: 100%;
