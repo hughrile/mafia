@@ -73,6 +73,17 @@ var exitEvent = document.getElementById('exitEvent');
 
 var showEventBtn = document.getElementById('showEventBtn');
 
+// mobile size using --vh
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+window.addEventListener('resize', () => {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
+
+
 // Emit events
 
 titleText.addEventListener('click', function(){ // On clicking chat button
