@@ -92,7 +92,8 @@ body {
 
 #boxTop {
   position: relative;
-  height: calc(100% - 16px);
+  height: calc(100vh - 16px);
+  height: calc(var(--vh, 1vh) * 100 - 16px);
   margin: 8px;
   background-color: #1D1D1D;
   border-radius: 14px;
@@ -100,7 +101,8 @@ body {
 
 #boxTasks {
   position: relative;
-  height: calc(100% - 8px);
+  height: calc(100vh - 8px);
+  height: calc(var(--vh, 1vh) * 100 - 8px);
   margin: 8px;
   margin-top: 0;
   background-color: #1D1D1D;
