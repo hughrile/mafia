@@ -66,12 +66,13 @@ body {
 
 #divTop {
   background-color: transparent;
-  height: 100%;
+  height: calc(100vh - 100px);
+  height: calc(var(--vh, 1vh) * 100 - 100px);
 }
 
 #divTasks {
   background-color: transparent;
-  height: 100%;
+  height: calc(100% - 8px);
 }
 
 .stretchedToMargin {
@@ -87,8 +88,7 @@ body {
 
 #boxTop {
   position: relative;
-  height: calc(100vh - 100px);
-  height: calc(var(--vh, 1vh) * 100 - 100px);
+  height: 100%;
   margin: 8px;
   background-color: #1D1D1D;
   border-radius: 14px;
@@ -96,7 +96,7 @@ body {
 
 #boxTasks {
   position: relative;
-  height: calc(100% - 8px);
+  height: 100%;
   margin: 8px;
   margin-top: 0;
   background-color: #1D1D1D;
