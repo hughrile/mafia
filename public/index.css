@@ -43,6 +43,11 @@
   margin-right: 8px;
 }
 
+.grid-wrapper {
+  position: relative;
+  display: grid; /*not sure why this is necessary for Safari, but it is*/
+}
+
 .container { /* grid */
   height: 100vh; /* fallback */
   height: calc(var(--vh, 1vh) * 100);
