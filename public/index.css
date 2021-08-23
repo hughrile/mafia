@@ -102,6 +102,7 @@ body {
 #boxTasks {
   position: relative;
   height: calc(100% - 8px);
+  height: calc(var(--vh, 1vh) * 100 - 8x);
   margin: 8px;
   margin-top: 0;
   background-color: #1D1D1D;
