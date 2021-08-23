@@ -43,7 +43,6 @@
   margin-right: 8px;
 }
 
-
 .container { /* grid */
   height: 100vh; /* fallback */
   height: calc(var(--vh, 1vh) * 100);
@@ -97,7 +96,7 @@ body {
 
 #boxTasks {
   position: relative;
-  height: 84px;
+  height: calc(100% - 8px);
   margin: 8px;
   margin-top: 0;
   background-color: #1D1D1D;
