@@ -69,9 +69,9 @@ var gameEventGUI = document.getElementById('gameEventGUI');
 var gameEventTitle = document.getElementById('gameEventTitle');
 var gameEventText = document.getElementById('gameEventText');
 var exitEvent = document.getElementById('exitEvent');
-
-
 var showEventBtn = document.getElementById('showEventBtn');
+
+
 
 
 
@@ -95,20 +95,69 @@ var showEventBtn = document.getElementById('showEventBtn');
 
 // gameUI -> index(return)
 
+// Taskbar Icons
+var iconArr0 = document.getElementById('iconArr0');
+var groupArr0 = document.getElementById('groupArr0');
+
+var iconArr1 = document.getElementById('iconArr1');
+var groupArr1 = document.getElementById('groupArr1');
+
+var iconArr2 = document.getElementById('iconArr2');
+var groupArr2 = document.getElementById('groupArr2');
+
+
+var panel = document.getElementsByClassName("panel");
+
+const iconArr = [iconArr0, iconArr1, iconArr2];
+const groupArr = [groupArr0, groupArr1, groupArr2];
+/*
+actionIcon.addEventListener('click', function(){
+    for(var i = 0; i < panel.length; i++) {
+        panel[i].style.display = "none";
+    }
+    actionGroup.style.display = "initial";
+    console.log('test');
+});
+*/
+
+var active;
+var display;
+
+for (i=0; i < iconArr.length; i++) {
+    document.getElementById("iconArr"+i).addEventListener('click', (function(){
+        var index = i;
+        return function() {
+            for(var x = 0; x < panel.length; x++) {
+                panel[x].style.display = "none";
+            }
+            if (display == false && active == index) {
+                groupArr[index].style.display = "none";
+                display = true;
+            } else {
+                groupArr[index].style.display = "inline";
+                active = index;
+                display = false;
+            }
+
+            /*
+            if (index !== active) {
+                groupArr[index].style.display = "inline";
+                
+            } else if (display !== "none") {
+                groupArr[index].style.display = "inline";
+                
+            }*/
+        }
+    })());
+}
+
+
+
 // howtoUI -> index(return)
 
 // aboutUI -> index(return)
 
 
-
-
-
-
-
-
-var test = document.getElementById('test');
-var testwrapper = document.getElementById('test');
-var container = document.getElementsByClassName("container");
 
 
 
@@ -125,8 +174,7 @@ var magicToggle = function(triggerID, className) {
     });
 } 
 // magicToggle(test, testButtons);
-magicToggle(test, container);
-
+/*
 var magicHide = function(triggerID, className) {
     triggerID.addEventListener('click', function(){ // On clicking username button
         for(var i = 0; i < className.length; i++) {
@@ -142,7 +190,7 @@ var magicShow = function(triggerID, className) {
         }
     });
 }
-
+*/
 
 // Use class names to specify items of a UI layout?
 
