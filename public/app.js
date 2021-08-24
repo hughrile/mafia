@@ -73,6 +73,99 @@ var exitEvent = document.getElementById('exitEvent');
 
 var showEventBtn = document.getElementById('showEventBtn');
 
+
+
+
+// NewUI
+
+// Initial display
+// Show layout (show + Wrapper/UI Name)
+// Hide layout (hide + Wrapper/UI Name)
+
+
+
+// indexUI
+
+// Create -> gameUI
+// Join -> gameUI
+// How to play
+// About
+
+
+
+// gameUI -> index(return)
+
+// howtoUI -> index(return)
+
+// aboutUI -> index(return)
+
+
+
+
+
+
+
+
+var test = document.getElementById('test');
+var testwrapper = document.getElementById('test');
+var container = document.getElementsByClassName("container");
+
+
+
+
+
+var magicToggle = function(triggerID, className) {
+    triggerID.addEventListener('click', function(){ // On clicking username button
+        for(var i = 0; i < className.length; i++) {    
+          if (className[i].style.display !== "none") {
+            className[i].style.display = "none";
+          } else
+          className[i].style.display = "initial";
+        }
+    });
+} 
+// magicToggle(test, testButtons);
+magicToggle(test, container);
+
+var magicHide = function(triggerID, className) {
+    triggerID.addEventListener('click', function(){ // On clicking username button
+        for(var i = 0; i < className.length; i++) {
+        className[i].style.display = "none";
+        }
+    });
+}
+
+var magicShow = function(triggerID, className) {
+    triggerID.addEventListener('click', function(){ // On clicking username button
+        for(var i = 0; i < className.length; i++) {
+        className[i].style.display = "initial";
+        }
+    });
+}
+
+
+// Use class names to specify items of a UI layout?
+
+
+// Initial display
+
+// Enable layout
+
+// Hide layout
+
+
+
+
+
+
+
+
+
+
+
+
+
+var windowHeight = function () {
 // mobile size using --vh
 let vh = window.innerHeight * 0.01;
 document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -81,6 +174,10 @@ window.addEventListener('resize', () => {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
+} 
+windowHeight();
+
+
 
 
 

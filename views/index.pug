@@ -11,32 +11,42 @@ head
   link(href="https://fonts.googleapis.com/css2?family=Montserrat&family=Oxygen&display=swap" rel="stylesheet")
 
 
-.container
+
+// .indexUI
+
+.gameUI
   .main 
     #divTop.stretchedToMargin
       #boxTop
-        img#iconHat(src='./hat_dark.svg')
+        img#iconHat(src='./src/hat_dark.svg')
+
+        #actionGroup.panel test
+        #roleGroup.panel test
+        #messageGroup.panel test
 
   .icon1
-    img.iconActionMain(src='./action_dark_main.svg')
+    img.iconActionMain(src='./src/action_dark_main.svg')
 
   .icon2
-    img.iconActionMain(src='./detective_journal.svg')
+    img.iconActionMain(src='./src/detective_journal.svg')
 
   .icon3
-    img.iconActionMain(src='./messages_dark_main.svg')
+    img.iconActionMain(src='./src/messages_dark_main.svg')
 
   .taskbar
     #divTasks.stretchedToMargin
       #boxTasks
 
+// .howtoUI
+
+// .aboutUI
 
   
     
   
 
   //S#titleBox
-    img#titleText(src='./titleText.png')
+    img#titleText(src='./src/titleText.png')
     span#titleSubtext alpha
 
   //#headerBox
@@ -108,7 +118,7 @@ head
     #cardUI
       button#exitCard.exitButton
         .exitText &#10006
-      img(src='./Template.svg').shadow
+      img(src='./src/Template.svg').shadow
 
     #groupVoteGUI.popupWindow
       p#voteHeading Vote here:

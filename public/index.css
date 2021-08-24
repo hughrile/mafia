@@ -1,3 +1,7 @@
+/* ********* */
+/* Universal */
+/* ********* */ 
+
 :root {
   --fontTitle: 'Teko', sans-serif;
   --fontMain: 'Montserrat', sans-serif;
@@ -10,6 +14,103 @@
 
   --shadowMain: 0px 0px 15px 2px rgba(0,0,0,0.4);
   --shadowBig: 0px 10px 40px 25px rgba(0,0,0,0.35);
+
+  /* NewUI colours */
+  --UIBG: #3C3C3C;
+  --UIFG: #1D1D1D;
+}
+
+body {
+  background: var(--UIBG, #3C3C3C);
+  /*background: rgb(22,22,22);
+  background: linear-gradient(180deg, rgb(29, 29, 29) 70%, rgba(0,0,0,1) 100%);
+  height: 100%;*/
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  margin: 0;
+}
+
+h1{ 
+  font-family: var(--fontMain);
+  text-align: center; 
+  color: var(--textColor, white);
+  margin: auto;
+}
+
+p {
+font-family: var(--fontMain);
+font-size: 24px;
+font-weight: 500;
+color: white;
+margin: 0;
+}
+/*
+li {
+margin: 2px;
+}
+*/
+img {
+  width: 100%;
+  height: auto;
+  border-style: none;
+}
+
+input {
+font-family: var(--fontMain);
+font-weight: 100;
+color: white;
+background-color: transparent;
+font-size: 18px;
+height: 100%;
+margin: 0;
+padding: 0;
+outline: none;
+border: none;
+border-style: none;
+z-index: 1;
+position: relative;
+width: 100%;
+text-align: center;
+}
+
+::placeholder {
+
+opacity: 0.3;
+
+}
+
+label {
+font-family: var(--fontMain);
+font-weight: 100;
+font-size: 14px;
+color: var(--textColor, white);
+position: absolute;
+top: 4px;
+left: 4px;
+z-index: 2;
+padding: 0;
+}
+
+
+/* *********** */
+/* UI Elements */
+/* *********** */ 
+
+
+/* INDEX */
+
+
+/* GAME */
+
+.gameUI { /* grid */
+  height: 100vh; /* fallback */
+  height: calc(var(--vh, 1vh) * 100);
+  width: 100%;
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: [main-start taskbar-start] 1fr 1fr 1fr [taskbar-end main-end];
+  grid-template-rows: [main-start] auto [main-end taskbar-start] 84px [taskbar-end];
+  background-color: var(--UIBG, #3C3C3C);
 }
 
 .main {
@@ -43,27 +144,6 @@
   margin-right: 8px;
 }
 
-.container { /* grid */
-  height: 100vh; /* fallback */
-  height: calc(var(--vh, 1vh) * 100);
-  width: 100%;
-  display: grid;
-  grid-gap: 0px;
-  grid-template-columns: [main-start taskbar-start] 1fr 1fr 1fr [taskbar-end main-end];
-  grid-template-rows: [main-start] auto [main-end taskbar-start] 84px [taskbar-end];
-  background-color: #3C3C3C;
-}
-
-body {
-  background: #ffffff;
-  /*background: rgb(22,22,22);
-  background: linear-gradient(180deg, rgb(29, 29, 29) 70%, rgba(0,0,0,1) 100%);
-  height: 100%;*/
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
-  margin: 0;
-}
-
 #divTop {
   background-color: transparent;
   height: calc(100vh - 100px);
@@ -75,6 +155,25 @@ body {
   height: 76px;
 }
 
+
+
+#boxTop {
+  position: relative;
+  height: 100%;
+  margin: 8px;
+  background-color: var(--UIFG, #1D1D1D);
+  border-radius: 14px;
+}
+
+#boxTasks {
+  position: relative;
+  height: 100%;
+  margin: 8px;
+  margin-top: 0;
+  background-color: var(--UIFG, #1D1D1D);;
+  border-radius: 14px;
+}
+
 .stretchedToMargin {
   display: block;
   position:relative;
@@ -84,86 +183,6 @@ body {
   left:0;
   right:0;
   margin: 0;
-}
-
-#boxTop {
-  position: relative;
-  height: 100%;
-  margin: 8px;
-  background-color: #1D1D1D;
-  border-radius: 14px;
-}
-
-#boxTasks {
-  position: relative;
-  height: 100%;
-  margin: 8px;
-  margin-top: 0;
-  background-color: #1D1D1D;
-  border-radius: 14px;
-}
-
-
-h1{ 
-    font-family: var(--fontMain);
-    text-align: center; 
-    color: var(--textColor, white);
-    margin: auto;
-}
-
-p {
-  font-family: var(--fontMain);
-  font-size: 24px;
-  font-weight: 500;
-  color: rgb(255, 255, 255);
-  margin: 0;
-}
-/*
-li {
-  margin: 2px;
-}
-*/
-img {
-    width: 100%;
-    height: auto;
-    border-style: none;
-  }
-
-input {
-  font-family: var(--fontMain);
-  font-weight: 100;
-  color: white;
-  background-color: transparent;
-  font-size: 18px;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-  border-style: none;
-  z-index: 1;
-  position: relative;
-  width: 100%;
-  text-align: center;
-}
-
-::placeholder {
-
-  opacity: 0.3;
-
-
-}
-
-label {
-  font-family: var(--fontMain);
-  font-weight: 100;
-  font-size: 14px;
-  color: var(--textColor, white);
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  z-index: 2;
-  padding: 0;
 }
 
 #iconHat {
@@ -178,6 +197,42 @@ label {
   height: 60px;
   margin: 8px;
 }
+
+#actionGroup {
+  left: 0;
+}
+
+#roleGroup {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#messageGroup {
+  right: 0;
+}
+
+.panel {
+background-color: var(--UIBG, #3C3C3C);
+height: 60%;
+width: 30%;
+min-width: min-content;
+max-width: 720px;
+position: absolute;
+border-radius: 14px;
+margin: 8px;
+bottom: 0;
+}
+
+/* HOWTO */
+
+
+/* ABOUT */
+
+
+
+
 
 
 
@@ -625,25 +680,6 @@ label {
   font-size: 22px;
   color: black;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -471,6 +471,9 @@ var chatroomsGet = function(socketID) { // output rooms object as an array
     return rooms;
 }
 
+
+
+
 /*
 var chatroomsGet = function(socketID) { // output rooms object as an array
     r = getRoomsBySocket(socketID);
