@@ -100,6 +100,108 @@ padding: 0;
 /* INDEX */
 
 
+.indexUI {
+  height: 100vh; /* fallback */
+  height: calc(var(--vh, 1vh) * 100);
+  width: 100%;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: [main-start] 1fr 2fr 2fr 1fr [main-end];
+  grid-template-rows: [main-start] 1fr 2fr 2fr 1fr [main-end];
+  background-color: var(--UIBG, #3C3C3C);
+  /*display: none;*/
+}
+
+.indexMain {
+  grid-area: main;
+  /*background-color: transparent;*/
+}
+
+.indexTitleTextbox {
+  grid-column: 2 / 4;
+  grid-row: 1 / 2;
+  justify-self: center;
+  align-self: end;
+}
+
+#indexTitleText {
+  position: relative;
+  width: 40vw;
+}
+
+.indexButtonBox {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background-color: transparent;
+  border-radius: 8px;
+  border-color: rgba(255, 255, 255, 0.5);
+  border-style: solid;
+  border-width: 1px;
+  
+}
+
+.indexButtonBox:hover {
+  background-color: rgba(255, 0, 0, 0.25);
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.iconIndexText {
+  position: relative;
+  width: 100%;
+  font-family: 'Raleway', sans-serif;
+  color: white;
+  font-size: 1.5em;
+}
+
+.indexIcon1 {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.indexIcon2 {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.indexIcon3 {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.indexIcon4 {
+  grid-column: 3 / 4;
+  grid-row: 3 / 4;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.divMain {
+  background-color: transparent;
+  height: calc(100vh - 16px);
+  height: calc(var(--vh, 1vh) * 100 - 16px);
+}
+
+.boxMain {
+  position: relative;
+  height: 100%;
+  margin: 8px;
+  background-color: var(--UIFG, #1D1D1D);
+  border-radius: 14px;
+}
+
 /* GAME */
 
 .gameUI { /* grid */
@@ -111,6 +213,7 @@ padding: 0;
   grid-template-columns: [main-start taskbar-start] 1fr 1fr 1fr [taskbar-end main-end];
   grid-template-rows: [main-start] auto [main-end taskbar-start] 84px [taskbar-end];
   background-color: var(--UIBG, #3C3C3C);
+  display: none;
 }
 
 .main {
@@ -154,8 +257,6 @@ padding: 0;
   background-color: transparent;
   height: 76px;
 }
-
-
 
 #boxTop {
   position: relative;
