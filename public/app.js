@@ -77,6 +77,8 @@ var showEventBtn = document.getElementById('showEventBtn');
 
 
 // NewUI
+var indexUI = document.querySelector(".indexUI");
+var gameUI = document.querySelector(".gameUI");
 
 // Initial display
 // Show layout (show + Wrapper/UI Name)
@@ -85,6 +87,37 @@ var showEventBtn = document.getElementById('showEventBtn');
 
 
 // indexUI
+var indexBtn0 = document.getElementById('indexBtn0');
+var indexBtn1 = document.getElementById('indexBtn1');
+var indexBtn2 = document.getElementById('indexBtn2');
+var indexBtn3 = document.getElementById('indexBtn3');
+
+
+const indexBtn = [indexBtn0, indexBtn1, indexBtn2, indexBtn3];
+
+for (i=0; i < indexBtn.length; i++) {
+    document.getElementById("indexBtn"+i).addEventListener('click', (function(){
+        var index = i;
+        
+        return function() {
+            
+            indexUI.style.display = "none";
+
+            if (index == 0) {
+                // console.log('Create Button');
+                gameUI.style.display = "grid";
+            } else if (index == 1) {
+                // console.log('Join Button');
+                gameUI.style.display = "grid";
+            } else if (index == 2) {
+                // console.log('Howto Button');
+            } else if (index == 3) {
+                // console.log('About Button');
+            } else { console.log('index button error'); }
+            
+        }
+    })());
+}
 
 // Create -> gameUI
 // Join -> gameUI
@@ -94,6 +127,8 @@ var showEventBtn = document.getElementById('showEventBtn');
 
 
 // gameUI -> index(return)
+
+var iconHat = document.getElementById('iconHat');
 
 // Taskbar Icons
 var iconArr0 = document.getElementById('iconArr0');
@@ -119,6 +154,11 @@ actionIcon.addEventListener('click', function(){
     console.log('test');
 });
 */
+
+iconHat.addEventListener('click', function(){ // On clicking username button
+    gameUI.style.display = "none";
+    indexUI.style.display = "grid";
+});
 
 var active;
 var display;
