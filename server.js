@@ -11,6 +11,8 @@ const io = require("socket.io")(httpServer, options);
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
 
+var crypto = require("crypto");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -28,6 +30,7 @@ var maxRounds = 50; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
 var socketArray = []; // global sockets array
+// var roomsArray = []; // global rooms array
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -54,7 +57,7 @@ app.get("/", function(req, res){
 });
 
 app.use(express.static(path.join(__dirname, "/public")));
-
+//console.log(crypto.randomBytes(20).toString('hex'));
 
 io.on('connection', socket => { // connection start
 
@@ -133,7 +136,11 @@ io.on('connection', socket => { // connection start
   });
 
 
-  socket.join("room-"+roomno); //join room
+  socket.join("global-"+roomno); //join room
+
+  socket.on('joinGlobal', function(){
+    socket.join("global-"+roomno); 
+  });
 
   io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
@@ -191,6 +198,19 @@ io.on('connection', socket => { // connection start
 
   socket.on('exitGameSetup', function(){
     socket.emit('exitGameSetup')
+  });
+
+  socket.on('createRoom', function(data){
+    var roomId = crypto.randomBytes(4).toString('hex');
+    var roomName = data.roomName;
+
+    socket.join(roomId);
+    console.log(roomName + "  -  " + roomId);
+
+    socket.emit('createRoom', {
+      roomId: roomId,
+      roomName: roomName
+    });
   });
 
 

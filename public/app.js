@@ -74,10 +74,13 @@ var showEventBtn = document.getElementById('showEventBtn');
 
 
 
+var idHeader = document.getElementById('idHeader');
+var nameHeader = document.getElementById('nameHeader');
 
 
 // NewUI
 var indexUI = document.querySelector(".indexUI");
+var createUI = document.querySelector(".createUI");
 var gameUI = document.querySelector(".gameUI");
 
 // Initial display
@@ -100,30 +103,55 @@ for (i=0; i < indexBtn.length; i++) {
         var index = i;
         
         return function() {
-            
-            indexUI.style.display = "none";
 
             if (index == 0) {
                 // console.log('Create Button');
-                gameUI.style.display = "grid";
+                // indexUI.style.display = "none";
+                // createUI.style.display = "grid";
             } else if (index == 1) {
                 // console.log('Join Button');
+                indexUI.style.display = "none";
                 gameUI.style.display = "grid";
             } else if (index == 2) {
                 // console.log('Howto Button');
+                // indexUI.style.display = "none";
             } else if (index == 3) {
                 // console.log('About Button');
-            } else { console.log('index button error'); }
+                // indexUI.style.display = "none";
+            } else { console.log('currently unavailable'); }
             
         }
     })());
 }
 
-// Create -> gameUI
-// Join -> gameUI
-// How to play
-// About
+// createUI
+var roomNameInput = document.getElementById('roomNameInput');
+var createButton = document.getElementById('createButton');
 
+createButton.addEventListener('click', function(){ // On clicking chat button
+    socket.emit('createRoom', {
+        roomName: roomNameInput.value
+    });
+
+    createUI.style.display = "none";
+    gameUI.style.display = "grid";
+});
+
+socket.on('createRoom', function(data){ // show card
+    
+    var roomId = data.roomId;
+    var roomName = data.roomName;
+
+    console.log(roomName + "  -0-  " + roomId);
+
+    idHeader.innerHTML = roomId;
+    nameHeader.innerHTML = roomName;
+
+
+});
+
+
+// joinUI
 
 
 // gameUI -> index(return)
@@ -158,6 +186,9 @@ actionIcon.addEventListener('click', function(){
 iconHat.addEventListener('click', function(){ // On clicking username button
     gameUI.style.display = "none";
     indexUI.style.display = "grid";
+    socket.emit('joinGlobal');
+    idHeader.style.display = 'none';
+    idHeader.style.display = 'none';
 });
 
 var active;
@@ -253,6 +284,7 @@ var magicShow = function(triggerID, className) {
 
 
 
+
 var windowHeight = function () {
 // mobile size using --vh
 let vh = window.innerHeight * 0.01;
@@ -292,7 +324,7 @@ usernameTriggerBtn.addEventListener('click', function(){ // On clicking username
 
 socket.on('exitUsername', function(){ // hide and reset vote window
     usernameConsole.style.visibility= 'hidden';
-})
+});
 
 usernameBtn.addEventListener('click', function(){ // On clicking username button
     if ((usernameConsole.style.visibility == 'visible')){
@@ -338,7 +370,7 @@ gameStartBtn.addEventListener('click', function(){ // On clicking start game cou
 
 socket.on('exitGameSetup', function(){ // hide and reset vote window
     gameSetupConsole.style.visibility= 'hidden';
-})
+});
 
 
 
@@ -406,7 +438,7 @@ socket.on('chatroomsVerify', function(data){
 // Listen for events
 socket.on('chat', function(data){ // place message in chat
     output.innerHTML += '<p>' + data.message + '</p>'
-})
+});
 
 
 /*
@@ -418,12 +450,12 @@ socket.on('userSubmit', function(data){ // show card
 socket.on('gameStart', function(){ // show card
     //gameStart();
     console.log('game started clientside');
-})
+});
 
 socket.on('roleInit', function(data){ // show card
     
     header.innerHTML = `${data.name} your role is ${data.role}`;
-})
+});
 
 socket.on('header', function (data) {
     header.innerHTML = data.header;
@@ -447,7 +479,7 @@ socket.on('timerUpdate', function (data) {
 
 socket.on('hideById', function(data){ //
     document.getElementById(`${data.ID}`).style.visibility= 'hidden' ;
-})
+});
 
 
 
@@ -460,7 +492,7 @@ socket.on('showVote', function(data){ // show card
     groupVoteButtons.innerHTML = data.buttonParse;
     voteSelect.innerHTML = '';
     groupVoteGUI.style.visibility= 'visible';
-})
+});
 
 
 exitVote.addEventListener('click', function(){ // On clicking chat button
@@ -472,7 +504,7 @@ exitVote.addEventListener('click', function(){ // On clicking chat button
 
 socket.on('exitVote', function(){ // hide and reset vote window
     groupVoteGUI.style.visibility= 'hidden';
-})
+});
 
 
 exitEvent.addEventListener('click', function(){ // On clicking event close button
@@ -482,7 +514,7 @@ exitEvent.addEventListener('click', function(){ // On clicking event close butto
 
 socket.on('exitEvent', function(){ // hide and reset vote window
     gameEventGUI.style.visibility= 'hidden';
-})
+});
 
 
 
@@ -503,13 +535,13 @@ socket.on('showEvent', function(data){
     if (data.kill == true) { // fires if this event kills the player
         header.innerHTML = 'You are a spectator'
     }
-})
+});
 
 
 
 socket.on('showCard', function(){ // show card
     cardUI.style.visibility= 'visible';
-})
+});
 
 
 
@@ -521,4 +553,4 @@ exitCard.addEventListener('click', function(){ // On clicking chat button
 
 socket.on('exitCard', function(){ // show card
     cardUI.style.visibility= 'hidden';
-})
+});

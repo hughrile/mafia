@@ -2,6 +2,11 @@
 /* Universal */
 /* ********* */ 
 
+.txtWhite { /* this is temp  */
+  color: white;
+  font-size: 16px;
+}
+
 :root {
   --fontTitle: 'Teko', sans-serif;
   --fontMain: 'Montserrat', sans-serif;
@@ -109,7 +114,6 @@ padding: 0;
   grid-template-columns: [main-start] 1fr 2fr 2fr 1fr [main-end];
   grid-template-rows: [main-start] 1fr 2fr 2fr 1fr [main-end];
   background-color: var(--UIBG, #3C3C3C);
-  /*display: none;*/
 }
 
 .indexMain {
@@ -138,10 +142,27 @@ padding: 0;
   border-color: rgba(255, 255, 255, 0.5);
   border-style: solid;
   border-width: 1px;
-  
 }
 
 .indexButtonBox:hover {
+  background-color: rgba(0, 255, 0, 0.5);
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.unavailable {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background-color: transparent;
+  border-radius: 8px;
+  border-color: rgba(255, 255, 255, 0.5);
+  border-style: solid;
+  border-width: 1px;
+}
+
+.unavailable:hover {
   background-color: rgba(255, 0, 0, 0.25);
   border-color: black;
   border-style: solid;
@@ -201,6 +222,15 @@ padding: 0;
   background-color: var(--UIFG, #1D1D1D);
   border-radius: 14px;
 }
+
+/* Create */
+
+.createUI {
+
+  display: none;
+}
+
+/* Join */
 
 /* GAME */
 

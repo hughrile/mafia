@@ -24,7 +24,7 @@ head
 
   .indexIcon1
     span.iconIndexText Create
-    #indexBtn0.indexButtonBox
+    #indexBtn0.unavailable
 
 
   .indexIcon2
@@ -34,19 +34,31 @@ head
 
   .indexIcon3
     span.iconIndexText How to
-    #indexBtn2.indexButtonBox
+    #indexBtn2.unavailable
 
 
   .indexIcon4
     span.iconIndexText About
-    #indexBtn3.indexButtonBox
+    #indexBtn3.unavailable
 
+.createUI
+  .main
+    .divMain
+      .boxMain.txtWhite
+        span Room Name: 
+        .inputBox
+          input#roomNameInput
+        button#createButton.btnBox.widthFull Create
     
 .gameUI
   .main 
     #divTop.stretchedToMargin
       #boxTop
         img#iconHat.disableSelect(src='./src/hat_dark.svg')
+
+        span#idHeader.txtWhite
+        br
+        span#nameHeader.txtWhite
 
         #groupArr0.panel Action
           img#dot1.iconDot(src='./src/iconDot.svg')
