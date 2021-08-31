@@ -204,7 +204,7 @@ io.on('connection', socket => { // connection start
     var roomId = crypto.randomBytes(4).toString('hex');
     var roomName = data.roomName;
 
-    socket.join(roomId);
+    /*socket.join(roomId);*/
     console.log(roomName + "  -  " + roomId);
 
     socket.emit('createRoom', {
@@ -380,7 +380,7 @@ srv.on('roleInit', function() {
 
 srv.on('chatroomsInit', function() {
   for (i = 0; i < socketArray.length; i++) { 
-  socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
   playerRooms = functions.chatroomsGet(socket.socketId);
   if (socket !== undefined && socket !== null) {
   io.to(socket.socketId).emit('chatroomsInit', {

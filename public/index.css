@@ -238,12 +238,11 @@ padding: 0;
   height: 100vh; /* fallback */
   height: calc(var(--vh, 1vh) * 100);
   width: 100%;
-  display: grid;
+  display: none;
   grid-gap: 0px;
   grid-template-columns: [main-start taskbar-start] 1fr 1fr 1fr [taskbar-end main-end];
   grid-template-rows: [main-start] auto [main-end taskbar-start] 84px [taskbar-end];
   background-color: var(--UIBG, #3C3C3C);
-  display: none;
 }
 
 .main {
@@ -774,36 +773,49 @@ display: none;
 
 
 #player-listBox {
- background-color: teal;
+ background-color: var(--UIBG, #3C3C3C);
  margin: 20px;
- padding: 4px;
  height: auto;
  width: 140px;
+ padding-top: 0.01px;
+ padding-bottom: 0.01px;
+ border-radius: 14px;
+
+ display: none; /*temporary / testing */
 }
 
 #player-listTitle {
+  font-family: var(--fontMain);
   font-size: 18px;
-  font-weight: 900;
-  margin: 4px;
+  font-weight: bolder;
+  margin: 8px;
+  padding: 6px;
+  text-align: center;
+  color: white;
+  background-color: var(--UIFG, #1D1D1D);
+  border-radius: 6px;
 }
 
 #player-list {
   list-style: none;
   font-style: bold;
   font-family: var(--fontMain);
-  font-size: 16px;
-  font-weight: 900;
-  background-color: rgba(255, 255, 255, 1);
-  padding: 1px;
-  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: var(--UIFG, #1D1D1D);
+  color: white;
+  padding: 0;
+  margin: 8px;
+  border-radius: 6px;
   width: auto;
   height: auto;
+  text-align: center;
 }
 
 .player-listItem {
   margin: 6px;
   /*background-color: rgba(64, 214, 97, 0.4);*/
-  padding: 2px;
+  padding: 6px;
 }
 
 

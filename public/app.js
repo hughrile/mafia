@@ -69,7 +69,6 @@ var gameEventGUI = document.getElementById('gameEventGUI');
 var gameEventTitle = document.getElementById('gameEventTitle');
 var gameEventText = document.getElementById('gameEventText');
 var exitEvent = document.getElementById('exitEvent');
-var showEventBtn = document.getElementById('showEventBtn');
 
 
 
@@ -302,10 +301,10 @@ windowHeight();
 
 
 // Emit events
-
+/*
 titleText.addEventListener('click', function(){ // On clicking chat button
     console.log('stop clicking me pls');
-});
+});*/
 
 socket.on('serverHost', function(){ // hide and reset vote window
     gameSetupConsole.style.visibility= 'visible';
@@ -522,11 +521,6 @@ showCard.addEventListener('click', function(){ // On clicking show card button
     socket.emit('showCard', {
     });
 });
-
-
-showEventBtn.addEventListener('click', function(data){ // On clicking show card button
-    gameEventGUI.style.visibility= 'visible';
-}); 
 
 socket.on('showEvent', function(data){
     gameEventTitle.innerHTML = data.title;
