@@ -383,13 +383,21 @@ srv.on('chatroomsInit', function() {
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
   playerRooms = functions.chatroomsGet(socket.socketId);
   if (socket !== undefined && socket !== null) {
-  io.to(socket.socketId).emit('chatroomsInit', {
-    playerRooms: playerRooms
-  });
+    io.to(socket.socketId).emit('chatroomsInit', {
+      playerRooms: playerRooms
+    });
   }
  }
 });
 
+srv.on('detectiveInit', function() {
+  for (i = 0; i < socketArray.length; i++) { 
+  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  if (socket.playerRole == 'detective') {
+    io.to(socket.socketId).emit('detectiveInit');
+  }
+  }
+});
 
 srv.on('timerStart', function(data){// update timers once immediately
   var phase = (data.phase);
@@ -739,6 +747,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
       console.log('end of lobby, allowPlayers now false');
       srv.emit(`roleInit`); // 
       srv.emit(`chatroomsInit`);
+      srv.emit(`detectiveInit`);
 
     } else if (data.phase.phaseName == 'night'){
       

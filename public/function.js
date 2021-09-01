@@ -451,6 +451,10 @@ var initRoleAssign = function() {
             roomPlus = '';
         }
 
+        if (sel == 'detective') {
+            actionUtil = 'detective';
+        }
+
         // create room here
 
         var y = new Room(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available

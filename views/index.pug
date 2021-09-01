@@ -113,26 +113,26 @@ head
           p#player-listTitle PLAYERS
           ul#player-list
 
-          #cardUI
-            button#exitCard.exitButton
-              .exitText &#10006
-            img(src='./src/Template.svg').shadow
+        //#cardUI
+          button#exitCard.exitButton
+            .exitText &#10006
+          img(src='./src/Template.svg').shadow
 
-          #groupVoteGUI.popupWindow
-            p#voteHeading Vote here:
-            .groupVoteButtons
-            br
-            #voteSelect
-            #confirmBtnBox
-              button#exitVote.btnBox.widthFull Lock it in
-            
+        #groupVoteGUI.popupWindow
+          p#voteHeading Vote here:
+          .groupVoteButtons
+          br
+          #voteSelect
+          #confirmBtnBox
+            button#exitVote.btnBox.widthFull Lock it in
+          
 
-          #gameEventGUI.alertWindow
-            button#exitEvent.exitButton X
-            p#gameEventTitle
-            p#gameEventText
+        #gameEventGUI.alertWindow
+          button#exitEvent.exitButton X
+          p#gameEventTitle
+          p#gameEventText
 
-          button#showCardBtn Show Card
+        //button#showCardBtn Show Card
 
 
         #usernameConsole.popupWindow
@@ -177,11 +177,11 @@ head
         br
         span#nameHeader.txtWhite
 
-        #groupArr0.panel Action
+        #groupArr0.panel Actions
           img#dot1.iconDot(src='./src/iconDot.svg')
         #groupArr1.panel Role
           img#dot2.iconDot(src='./src/iconDot.svg')
-        #groupArr2.panel Message
+        #groupArr2.panel Messages
           img#dot3.iconDot(src='./src/iconDot.svg')
           #chatroomBtnBox
             button#chatroomBtn0 Main

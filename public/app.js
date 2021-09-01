@@ -164,6 +164,7 @@ var groupArr0 = document.getElementById('groupArr0');
 var iconArr1 = document.getElementById('iconArr1');
 var groupArr1 = document.getElementById('groupArr1');
 
+var icon2 = document.querySelector('.icon2');
 var iconArr2 = document.getElementById('iconArr2');
 var groupArr2 = document.getElementById('groupArr2');
 
@@ -396,6 +397,10 @@ socket.on('chatroomsInit', function(data){
         }
         chatroomBtnArray[i].style.visibility = visibility;
     }
+});
+
+socket.on('detectiveInit', function(data){
+    icon2.style.display = 'inline';
 });
 
 /*
