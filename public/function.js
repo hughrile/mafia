@@ -243,7 +243,7 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player: ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false);
+    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false);
     playersArray.push(x);
     console.log(`Player ${playerId} connected (${socketId})`); // debug only
     output = `Player ${playerId} connected (${socketId})`;

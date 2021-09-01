@@ -157,11 +157,7 @@ head
         //br
 
 
-        #chatConsole
-          #chatConsoleWindow
-            #chatConsoleOutput
-          input#chatConsoleMessage(type='text' placeholder='Message')
-          button#chatConsoleSend Send
+
 
 
 
@@ -177,16 +173,29 @@ head
         br
         span#nameHeader.txtWhite
 
-        #groupArr0.panel Actions
+        #groupArr0.panel
+          .actionUpdates 
+            h1 Actions
+            p Generic text regarding an action that has occurred
           img#dot1.iconDot(src='./src/iconDot.svg')
         #groupArr1.panel Role
           img#dot2.iconDot(src='./src/iconDot.svg')
-        #groupArr2.panel Messages
+
+        #groupArr2.panel
+
+          
+          #chatConsoleWindow
+            #chatroomBtnBox
+              button#chatroomBtn0 Main
+              button#chatroomBtn1 Role
+              button#chatroomBtn2 Plus
+            br
+
+            #chatConsoleOutput
+          input#chatConsoleMessage(type='text' placeholder='Message')
+          button#chatConsoleSend Send
+
           img#dot3.iconDot(src='./src/iconDot.svg')
-          #chatroomBtnBox
-            button#chatroomBtn0 Main
-            button#chatroomBtn1 Role
-            button#chatroomBtn2 Plus
 
   .icon1
     img#iconArr0.iconMain.disableSelect(src='./src/action_dark_main.svg' draggable="false")

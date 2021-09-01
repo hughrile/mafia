@@ -146,7 +146,14 @@ io.on('connection', socket => { // connection start
 
 
   socket.on('chat', function(data){
-    io.sockets.emit('chat', data)
+
+    var message = data.message;
+    var playerName = playersArray[functions.getPlayerBySocket(socket.id)].playerName;
+
+    io.sockets.emit('chat', {
+      message: message,
+      playerName: playerName
+    });
   });
 
 

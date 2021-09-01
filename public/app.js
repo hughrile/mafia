@@ -441,7 +441,8 @@ socket.on('chatroomsVerify', function(data){
 
 // Listen for events
 socket.on('chat', function(data){ // place message in chat
-    output.innerHTML += '<p>' + data.message + '</p>'
+    output.innerHTML += `<p> ${data.playerName}: ${data.message}</p>`;
+    message.value = '';
 });
 
 
@@ -499,7 +500,7 @@ socket.on('showVote', function(data){ // show card
 });
 
 
-exitVote.addEventListener('click', function(){ // On clicking chat button
+exitVote.addEventListener('click', function(){
     console.log(voteSelect.innerHTML);
     socket.emit('exitVote', { // for verification ONLY
         vote: voteSelect.innerHTML
@@ -545,7 +546,7 @@ socket.on('showCard', function(){ // show card
 
 
 
-exitCard.addEventListener('click', function(){ // On clicking chat button
+exitCard.addEventListener('click', function(){
     socket.emit('exitCard', {
     });
 });
