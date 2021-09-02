@@ -169,14 +169,15 @@ head
             |  Time: 
             span#time-left(style='color: green;')
 
+        button#testBtn test
+
         span#idHeader.txtWhite
         br
         span#nameHeader.txtWhite
 
         #groupArr0.panel
           .actionUpdates 
-            h1 Actions
-            p Generic text regarding an action that has occurred
+            .actionUpdatesBox
           img#dot1.iconDot(src='./src/iconDot.svg')
         #groupArr1.panel Role
           img#dot2.iconDot(src='./src/iconDot.svg')
@@ -186,10 +187,9 @@ head
           
           #chatConsoleWindow
             #chatroomBtnBox
-              button#chatroomBtn0 Main
-              button#chatroomBtn1 Role
-              button#chatroomBtn2 Plus
-            br
+              button.chatroomBtn#chatroomBtn0 Main
+              button.chatroomBtn#chatroomBtn1 Role
+              button.chatroomBtn#chatroomBtn2 Plus
 
             #chatConsoleOutput
           input#chatConsoleMessage(type='text' placeholder='Message')

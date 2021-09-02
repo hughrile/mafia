@@ -191,10 +191,11 @@ io.on('connection', socket => { // connection start
     }
   });
 
+  /*
   socket.on('showCard', function(){
     socket.emit('showCard')
   });
-
+*/
   socket.on('exitCard', function(){
     socket.emit('exitCard')
   });
@@ -247,8 +248,11 @@ io.on('connection', socket => { // connection start
     }
   });
 
-
-
+/*
+  socket.on('testbtn', function(){
+    socket.emit('testbtn');
+  });
+*/
 
   socket.on('userSubmit', function(data){
 
@@ -516,10 +520,10 @@ var actionTrigger = function(voteVar, playerSelf) {
   if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
 
   if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
-    io.to(player.socketId).emit('showEvent', { 
+    io.to(player.socketId).emit('actionUpdate', {
       title: 'A crumble offering...', 
       text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
-      kill: false });
+    });
   }
 
   if (data.action == 'suspect') { 
@@ -678,10 +682,12 @@ var deaths = false;
       console.log('killed: ' + playersArray[i].playerName);
       functions.playersKilled.push(playersArray[i]);
       io.to(playersArray[i].socketId).emit('exitVote');
+        for (y = 0; y < playersArray.length; y++) {
+      io.to(playersArray[y].socketId).emit('actionUpdate', { title: 'Player Died', text: `The journey has ended for: ${playersArray[i].playerName}` });
+        }
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
       playersArray.splice(i,1);
       deaths = true;
-        
     }
 
     if (playersArray[i] !== null && playersArray[i] !== undefined) { // clears all votes to kill / protect

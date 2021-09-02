@@ -13,7 +13,7 @@ var btn = document.getElementById('chatConsoleSend');
 var output = document.getElementById('chatConsoleOutput');
 // Show Card
 var cardUI = document.getElementById('cardUI');
-var showCard = document.getElementById('showCardBtn');
+//var showCard = document.getElementById('showCardBtn');
 var exitCard = document.getElementById('exitCard');
 // Game Start
 var gameSetupConsole = document.getElementById('gameSetupConsole');
@@ -75,6 +75,15 @@ var exitEvent = document.getElementById('exitEvent');
 
 var idHeader = document.getElementById('idHeader');
 var nameHeader = document.getElementById('nameHeader');
+
+var testbtn = document.getElementById('testbtn');
+
+var actionUpdates = document.querySelector('.actionUpdates');
+var actionUpdatesBox = document.querySelector('.actionUpdatesBox');
+var actionHeader = document.querySelector(".actionHeader");
+var actionText = document.querySelector(".actionText");
+
+
 
 
 // NewUI
@@ -350,6 +359,28 @@ btn.addEventListener('click', function(){ // On clicking chat button
     });
 });
 
+message.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+     event.preventDefault();
+     btn.click();
+    }
+  });
+
+
+
+/*
+testBtn.addEventListener('click', function(){ // On clicking chat button
+    socket.emit('testbtn', {
+        message: message.value
+    });
+});
+*/
+
+socket.on('actionUpdate', function(data){
+    actionUpdatesBox.innerHTML += `<p class='actionHeader'>${data.title}</p> <p class='actionText'>${data.text}</p>`
+});
+
+
 
 ////////////////////////////////////////////
 gameStartBtn.addEventListener('click', function(){ // On clicking start game counter
@@ -522,11 +553,11 @@ socket.on('exitEvent', function(){ // hide and reset vote window
 });
 
 
-
+/*
 showCard.addEventListener('click', function(){ // On clicking show card button
     socket.emit('showCard', {
     });
-});
+});*/
 
 socket.on('showEvent', function(data){
     gameEventTitle.innerHTML = data.title;
