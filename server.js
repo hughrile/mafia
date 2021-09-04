@@ -31,6 +31,7 @@ var serverHost;
 var roomno = 1; // room variable
 var socketArray = []; // global sockets array
 // var roomsArray = []; // global rooms array
+const actionArr = [];
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -247,12 +248,6 @@ io.on('connection', socket => { // connection start
 
     }
   });
-
-/*
-  socket.on('testbtn', function(){
-    socket.emit('testbtn');
-  });
-*/
 
   socket.on('userSubmit', function(data){
 
@@ -511,8 +506,6 @@ var actionTrigger = function(voteVar, playerSelf) {
   
   var player = playersArray[functions.getPlayerById(voteVar)];
 
-  // console.log('testing action = '+ data.action);
-
   if (player !== undefined && player !== null) {
 
   if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
@@ -520,10 +513,14 @@ var actionTrigger = function(voteVar, playerSelf) {
   if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
 
   if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
-    io.to(player.socketId).emit('actionUpdate', {
-      title: 'A crumble offering...', 
-      text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
-    });
+
+    var title = 'A crumble offering...';
+    var text = `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`;
+    var html1 = `<p class='actionHeader'>${title}</p>`;
+    var html2 = `<p class='actionText'>${text}</p>`;
+    actionArr.unshift(html1, html2);
+
+    io.to(player.socketId).emit('actionUpdate', { actionArr });
   }
 
   if (data.action == 'suspect') { 
@@ -557,8 +554,6 @@ var getButtonsFromArray = function(buttonsArray) {
 
 
 if (data.phase.phaseName == 'revote') {
-
-  // console.log(revoteMode); //testing latest
 
   for (i=0; i < targetArray.length; i++) { // Create button
     const buttonsArray = [];
@@ -640,7 +635,6 @@ if (data.phase.phaseName == 'revote') {
         return;
 
       } else { // turn this into a function to call at the end of multimodal revote logic
-        console.log('testing '+ voteMode);
         if (voteMode.length == 1){
           actionTrigger(voteMode, targetArray[i]);
         } else {
@@ -682,8 +676,15 @@ var deaths = false;
       console.log('killed: ' + playersArray[i].playerName);
       functions.playersKilled.push(playersArray[i]);
       io.to(playersArray[i].socketId).emit('exitVote');
-        for (y = 0; y < playersArray.length; y++) {
-      io.to(playersArray[y].socketId).emit('actionUpdate', { title: 'Player Died', text: `The journey has ended for: ${playersArray[i].playerName}` });
+
+      var title = 'Player Died';
+      var text = `The journey has ended for: ${playersArray[i].playerName}`;
+      var html1 = `<p class='actionHeader'>${title}</p>`;
+      var html2 = `<p class='actionText'>${text}</p>`;
+      actionArr.unshift(html1, html2);
+      
+        for (y = 0; y < playersArray.length; y++) {      
+          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
         }
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
       playersArray.splice(i,1);

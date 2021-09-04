@@ -76,8 +76,6 @@ var exitEvent = document.getElementById('exitEvent');
 var idHeader = document.getElementById('idHeader');
 var nameHeader = document.getElementById('nameHeader');
 
-var testbtn = document.getElementById('testbtn');
-
 var actionUpdates = document.querySelector('.actionUpdates');
 var actionUpdatesBox = document.querySelector('.actionUpdatesBox');
 var actionHeader = document.querySelector(".actionHeader");
@@ -366,18 +364,12 @@ message.addEventListener("keyup", function(event) {
     }
   });
 
-
-
-/*
-testBtn.addEventListener('click', function(){ // On clicking chat button
-    socket.emit('testbtn', {
-        message: message.value
-    });
-});
-*/
-
 socket.on('actionUpdate', function(data){
-    actionUpdatesBox.innerHTML += `<p class='actionHeader'>${data.title}</p> <p class='actionText'>${data.text}</p>`
+    var actionArr = data.actionArr;
+    actionUpdatesBox.innerHTML = '';
+    for (i = 0; i < actionArr.length; i++) {
+        actionUpdatesBox.innerHTML += actionArr[i];
+    } 
 });
 
 
