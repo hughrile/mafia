@@ -26,7 +26,7 @@ var voteNum = 0;
 var gVcounter = 0;
 var phaseNumber = 1; // used to trigger next phase in a cycle, not reliable as the current value
 var roundNumber = 1;
-var maxRounds = 50; // Must be optional
+var maxRounds = 500; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
 var socketArray = []; // global sockets array
@@ -150,6 +150,9 @@ io.on('connection', socket => { // connection start
 
     var message = data.message;
     var playerName = playersArray[functions.getPlayerBySocket(socket.id)].playerName;
+
+
+    socket.broadcast.emit('messageAlert');
 
     io.sockets.emit('chat', {
       message: message,
@@ -752,6 +755,11 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     
     var phase = functions.phaseArray[phaseNumber];
 
+      // Hide voting window every round
+      for (i = 0; i < playersArray.length; i++) { // close voting for all players
+        io.to(playersArray[i].socketId).emit('exitVote');
+        // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
+      }
 
     // Execute specific code on phase end.
 
@@ -768,49 +776,59 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
       srv.emit('actionVote', {}); // action night vote
 
     } else if (data.phase.phaseName == 'day'){
-      
-      
+    
 
     } else if (data.phase.phaseName == 'vote'){
      
       srv.emit('actionVote', {}); // action group vote 
 
-    }
-
-    // Hide voting window every round
-    for (i = 0; i < playersArray.length; i++) { // close voting for all players
-      io.to(playersArray[i].socketId).emit('exitVote');
-      // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
-    }
-
-    // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
-
-    if (data.phase.phaseName == 'revote') { // revote end
+    } else if (data.phase.phaseName == 'revote') { // revote end
 
       srv.emit('actionVote', {}); // action group vote
 
       console.log('revote ended');
     }
 
-    if (phaseNumber < 3) {
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      phaseNumber++
-      srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
+
+
+
+
+    // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
+   
+    if (functions.winConditions() !== true) {
+
+      if (phaseNumber < 3) {
+        //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+        phaseNumber++
+        srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
       
-      
-    } else if (roundNumber < maxRounds) { // Next round  
-      //console.log(`Round ${roundNumber} Complete!`);
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      roundNumber++;
-      phaseNumber = 1;
-      srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
-    } else { // End Game
+      } else { // Next round  
+        //console.log(`Round ${roundNumber} Complete!`);
+        //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+        roundNumber++;
+        phaseNumber = 1;
+        srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
+      }
+    }  
+    /* 
+      else { // End Game
       //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
       console.log('Game Over');
+
+      if (functions.civilWin == true) {
+        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
+      } else if (functions.mafiaWin == true) {
+        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
+      } else {
+        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who one? i'm unsure. please report this error!`, kill: false });
+      }
+
       roundNumber = 0;
       phaseNumber = 0;
       checkNum = -1 // game ended and can be restarted now
+
     }
+*/
 
   }, data.phase.phaseDuration*1000); // after this long
 });

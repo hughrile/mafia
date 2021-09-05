@@ -520,9 +520,40 @@ var splicifier = function(e) { // for roles init
     }
 }
 
+// Win conditions
 
+var numberOf = function(role) {
+    var total = 0;
+    for(i = 0;i < playersArray.length;i++){
+        if(playersArray[i].playerRole == role){
+          total++;
+      }
+    } return total;
+}
 
+var civilWin = function() {
+    if (numberOf('mafia') < 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+var mafiaWin = function() {
+    if (numberOf('mafia') >= numberOf('civilian')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+var winConditions = function() {
+    if (civilWin == true || mafiaWin == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 
@@ -560,7 +591,10 @@ module.exports = {
     playerListUpdate: playerListUpdate,
     initRoleAssign: initRoleAssign,
     chatroomsGet: chatroomsGet,
-    getRoomsBySocketExists: getRoomsBySocketExists
+    getRoomsBySocketExists: getRoomsBySocketExists,
     //initTeamAssign, initTeamAssign,
-    
+
+    winConditions: winConditions,
+    civilWin: civilWin,
+    mafiaWin: mafiaWin
 }

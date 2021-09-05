@@ -165,13 +165,17 @@ socket.on('createRoom', function(data){ // show card
 var iconHat = document.getElementById('iconHat');
 
 // Taskbar Icons
+
+var alertArr0 = document.getElementById('alertArr0');
 var iconArr0 = document.getElementById('iconArr0');
 var groupArr0 = document.getElementById('groupArr0');
 
+var alertArr1 = document.getElementById('alertArr1');
 var iconArr1 = document.getElementById('iconArr1');
 var groupArr1 = document.getElementById('groupArr1');
 
 var icon2 = document.querySelector('.icon2');
+var alertArr2 = document.getElementById('alertArr2');
 var iconArr2 = document.getElementById('iconArr2');
 var groupArr2 = document.getElementById('groupArr2');
 
@@ -180,6 +184,7 @@ var panel = document.getElementsByClassName("panel");
 
 const iconArr = [iconArr0, iconArr1, iconArr2];
 const groupArr = [groupArr0, groupArr1, groupArr2];
+const alertArr = [alertArr0, alertArr1, alertArr2];
 /*
 actionIcon.addEventListener('click', function(){
     for(var i = 0; i < panel.length; i++) {
@@ -215,16 +220,8 @@ for (i=0; i < iconArr.length; i++) {
                 groupArr[index].style.display = "inline";
                 active = index;
                 display = false;
+                alertArr[index].style.display = "none";
             }
-
-            /*
-            if (index !== active) {
-                groupArr[index].style.display = "inline";
-                
-            } else if (display !== "none") {
-                groupArr[index].style.display = "inline";
-                
-            }*/
         }
     })());
 }
@@ -370,6 +367,7 @@ socket.on('actionUpdate', function(data){
     for (i = 0; i < actionArr.length; i++) {
         actionUpdatesBox.innerHTML += actionArr[i];
     } 
+    alertArr0.style.display = 'inline';
 });
 
 
@@ -468,6 +466,9 @@ socket.on('chat', function(data){ // place message in chat
     message.value = '';
 });
 
+socket.on('messageAlert', function(data){ // place message in chat
+    alertArr2.style.display = 'inline';
+});
 
 /*
 socket.on('userSubmit', function(data){ // show card
@@ -568,12 +569,14 @@ socket.on('showCard', function(){ // show card
 
 
 
-
+/*
 exitCard.addEventListener('click', function(){
     socket.emit('exitCard', {
     });
 });
 
+
 socket.on('exitCard', function(){ // show card
     cardUI.style.visibility= 'hidden';
 });
+*/

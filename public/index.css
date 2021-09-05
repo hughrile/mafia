@@ -263,13 +263,15 @@ padding: 0;
   grid-row: 2 / 3;
   justify-self: start;
   margin-left: 8px;
+  position: relative;
 }
 
 .icon2 {
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   justify-self: center;
-  /*display: none;*/
+  position: relative;
+  display: none;
 }
 
 .icon3 {
@@ -277,6 +279,7 @@ padding: 0;
   grid-row: 2 / 3;
   justify-self: end;
   margin-right: 8px;
+  position: relative;
 }
 
 #divTop {
@@ -330,6 +333,27 @@ padding: 0;
   height: 60px;
   margin: 8px;
   cursor: pointer;
+}
+
+.iconAlert {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+}
+
+#alertArr0 {
+  display: none;
+}
+
+#alertArr1 {
+  display: none;
+}
+
+#alertArr2 {
+  display: none;
 }
 
 .iconDot {
