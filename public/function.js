@@ -540,7 +540,7 @@ var civilWin = function() {
 }
 
 var mafiaWin = function() {
-    if (numberOf('mafia') >= numberOf('civilian')) {
+    if (numberOf('mafia') >= playersArray.length / 2) {
         return true;
     } else {
         return false;
@@ -548,7 +548,7 @@ var mafiaWin = function() {
 }
 
 var winConditions = function() {
-    if (civilWin == true || mafiaWin == true) {
+    if (civilWin() == true || mafiaWin() == true) {
         return true;
     } else {
         return false;

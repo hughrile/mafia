@@ -794,6 +794,8 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
 
     // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
+
+    console.log('winstatus2   '+ functions.winConditions());
    
     if (functions.winConditions() !== true) {
 
@@ -810,25 +812,25 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
         srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
       }
     }  
-    /* 
-      else { // End Game
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      console.log('Game Over');
+  
+    if (functions.winConditions() == true) { // End Game
+    //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+    console.log('Game Over');
 
-      if (functions.civilWin == true) {
-        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
-      } else if (functions.mafiaWin == true) {
-        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
-      } else {
-        io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who one? i'm unsure. please report this error!`, kill: false });
-      }
-
-      roundNumber = 0;
-      phaseNumber = 0;
-      checkNum = -1 // game ended and can be restarted now
-
+    if (functions.civilWin() == true) {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
+    } else if (functions.mafiaWin() == true) {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
+    } else {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who one? i'm unsure. please report this error!`, kill: false });
     }
-*/
+
+    roundNumber = 0;
+    phaseNumber = 0;
+    checkNum = -1 // game ended and can be restarted now
+
+  }
+
 
   }, data.phase.phaseDuration*1000); // after this long
 });
