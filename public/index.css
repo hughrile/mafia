@@ -26,13 +26,10 @@
   --UIAC: #1D1D1D;
 }
 
-body {
+body, html {
   background: var(--UIBG, #3C3C3C);
   width: 100%;
   height: 100%;
-  /*background: rgb(22,22,22);
-  background: linear-gradient(180deg, rgb(29, 29, 29) 70%, rgba(0,0,0,1) 100%);
-  height: 100%;*/
   overflow: hidden;
   overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden; /* Hide horizontal scrollbar */
@@ -259,6 +256,7 @@ padding: 0;
 .taskbar {
   grid-area: taskbar;
   background-color: transparent;
+  position: sticky;
 }
 
 .icon1 {
