@@ -243,7 +243,7 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player: ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false);
+    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false);
     playersArray.push(x);
     console.log(`Player ${playerId} connected (${socketId})`); // debug only
     output = `Player ${playerId} connected (${socketId})`;
@@ -451,6 +451,10 @@ var initRoleAssign = function() {
             roomPlus = '';
         }
 
+        if (sel == 'detective') {
+            actionUtil = 'detective';
+        }
+
         // create room here
 
         var y = new Room(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available
@@ -470,6 +474,9 @@ var chatroomsGet = function(socketID) { // output rooms object as an array
     rooms = [r.roomMain, r.roomRole, r.roomPlus]
     return rooms;
 }
+
+
+
 
 /*
 var chatroomsGet = function(socketID) { // output rooms object as an array
@@ -513,6 +520,45 @@ var splicifier = function(e) { // for roles init
     }
 }
 
+// Win conditions
+
+var numberOf = function(role) {
+    var total = 0;
+    for(i = 0;i < playersArray.length;i++){
+        if(playersArray[i].playerRole == role){
+          total++;
+      }
+    } return total;
+}
+
+var civilWin = function() {
+    if (numberOf('mafia') < 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+var mafiaWin = function() {
+    if (numberOf('mafia') >= playersArray.length / 2) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+var winConditions = function() {
+    if (civilWin() == true || mafiaWin() == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
+
 
 // exports the variables and functions above so that other modules can use them
 
@@ -545,7 +591,10 @@ module.exports = {
     playerListUpdate: playerListUpdate,
     initRoleAssign: initRoleAssign,
     chatroomsGet: chatroomsGet,
-    getRoomsBySocketExists: getRoomsBySocketExists
+    getRoomsBySocketExists: getRoomsBySocketExists,
     //initTeamAssign, initTeamAssign,
-    
+
+    winConditions: winConditions,
+    civilWin: civilWin,
+    mafiaWin: mafiaWin
 }

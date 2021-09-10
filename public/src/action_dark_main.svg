@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <g id="Group_106" data-name="Group 106" transform="translate(-36 -35)">
+    <g id="Group_105" data-name="Group 105" transform="translate(-871 -1000)">
+      <g id="Group_19" data-name="Group 19" transform="translate(907 1035)">
+        <rect id="Rectangle_80" data-name="Rectangle 80" width="60" height="60" rx="6" fill="#1d1d1d"/>
+        <g id="Group_14" data-name="Group 14">
+          <rect id="Rectangle_61" data-name="Rectangle 61" width="60" height="60" rx="6" fill="#3b3b3b"/>
+          <rect id="Rectangle_64" data-name="Rectangle 64" width="48" height="48" rx="6" transform="translate(6 6)" fill="#4f4f4f"/>
+          <path id="Path_6" data-name="Path 6" d="M0,0H36V36H0Z" transform="translate(12 10.5)" fill="none"/>
+          <g id="Group_8" data-name="Group 8" transform="translate(27 15)">
+            <rect id="Rectangle_76" data-name="Rectangle 76" width="6" height="18" rx="3" transform="translate(6 18) rotate(180)" fill="#fff"/>
+            <rect id="Rectangle_77" data-name="Rectangle 77" width="6" height="6" rx="3" transform="translate(6 29) rotate(180)" fill="#fff"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -11,6 +11,8 @@ const io = require("socket.io")(httpServer, options);
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
 
+var crypto = require("crypto");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -24,10 +26,12 @@ var voteNum = 0;
 var gVcounter = 0;
 var phaseNumber = 1; // used to trigger next phase in a cycle, not reliable as the current value
 var roundNumber = 1;
-var maxRounds = 50; // Must be optional
+var maxRounds = 500; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
 var socketArray = []; // global sockets array
+// var roomsArray = []; // global rooms array
+const actionArr = [];
 
 var allowPlayers = true;
 var gameStarted = false;
@@ -54,7 +58,7 @@ app.get("/", function(req, res){
 });
 
 app.use(express.static(path.join(__dirname, "/public")));
-
+//console.log(crypto.randomBytes(20).toString('hex'));
 
 io.on('connection', socket => { // connection start
 
@@ -133,13 +137,27 @@ io.on('connection', socket => { // connection start
   });
 
 
-  socket.join("room-"+roomno); //join room
+  socket.join("global-"+roomno); //join room
+
+  socket.on('joinGlobal', function(){
+    socket.join("global-"+roomno); 
+  });
 
   io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
 
   socket.on('chat', function(data){
-    io.sockets.emit('chat', data)
+
+    var message = data.message;
+    var playerName = playersArray[functions.getPlayerBySocket(socket.id)].playerName;
+
+
+    socket.broadcast.emit('messageAlert');
+
+    io.sockets.emit('chat', {
+      message: message,
+      playerName: playerName
+    });
   });
 
 
@@ -177,10 +195,11 @@ io.on('connection', socket => { // connection start
     }
   });
 
+  /*
   socket.on('showCard', function(){
     socket.emit('showCard')
   });
-
+*/
   socket.on('exitCard', function(){
     socket.emit('exitCard')
   });
@@ -191,6 +210,19 @@ io.on('connection', socket => { // connection start
 
   socket.on('exitGameSetup', function(){
     socket.emit('exitGameSetup')
+  });
+
+  socket.on('createRoom', function(data){
+    var roomId = crypto.randomBytes(4).toString('hex');
+    var roomName = data.roomName;
+
+    /*socket.join(roomId);*/
+    console.log(roomName + "  -  " + roomId);
+
+    socket.emit('createRoom', {
+      roomId: roomId,
+      roomName: roomName
+    });
   });
 
 
@@ -219,9 +251,6 @@ io.on('connection', socket => { // connection start
 
     }
   });
-
-
-
 
   socket.on('userSubmit', function(data){
 
@@ -360,16 +389,24 @@ srv.on('roleInit', function() {
 
 srv.on('chatroomsInit', function() {
   for (i = 0; i < socketArray.length; i++) { 
-  socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
   playerRooms = functions.chatroomsGet(socket.socketId);
   if (socket !== undefined && socket !== null) {
-  io.to(socket.socketId).emit('chatroomsInit', {
-    playerRooms: playerRooms
-  });
+    io.to(socket.socketId).emit('chatroomsInit', {
+      playerRooms: playerRooms
+    });
   }
  }
 });
 
+srv.on('detectiveInit', function() {
+  for (i = 0; i < socketArray.length; i++) { 
+  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  if (socket.playerRole == 'detective') {
+    io.to(socket.socketId).emit('detectiveInit');
+  }
+  }
+});
 
 srv.on('timerStart', function(data){// update timers once immediately
   var phase = (data.phase);
@@ -472,8 +509,6 @@ var actionTrigger = function(voteVar, playerSelf) {
   
   var player = playersArray[functions.getPlayerById(voteVar)];
 
-  // console.log('testing action = '+ data.action);
-
   if (player !== undefined && player !== null) {
 
   if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
@@ -481,10 +516,14 @@ var actionTrigger = function(voteVar, playerSelf) {
   if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
 
   if (data.action == 'bread') { console.log(player.playerName + ' targeted for bread');
-    io.to(player.socketId).emit('showEvent', { 
-      title: 'A crumble offering...', 
-      text: `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`, 
-      kill: false });
+
+    var title = 'A crumble offering...';
+    var text = `A loaf of bread and a trail of crumbs.<br>The Breadman strikes again!`;
+    var html1 = `<p class='actionHeader'>${title}</p>`;
+    var html2 = `<p class='actionText'>${text}</p>`;
+    actionArr.unshift(html1, html2);
+
+    io.to(player.socketId).emit('actionUpdate', { actionArr });
   }
 
   if (data.action == 'suspect') { 
@@ -518,8 +557,6 @@ var getButtonsFromArray = function(buttonsArray) {
 
 
 if (data.phase.phaseName == 'revote') {
-
-  // console.log(revoteMode); //testing latest
 
   for (i=0; i < targetArray.length; i++) { // Create button
     const buttonsArray = [];
@@ -601,7 +638,6 @@ if (data.phase.phaseName == 'revote') {
         return;
 
       } else { // turn this into a function to call at the end of multimodal revote logic
-        console.log('testing '+ voteMode);
         if (voteMode.length == 1){
           actionTrigger(voteMode, targetArray[i]);
         } else {
@@ -643,10 +679,19 @@ var deaths = false;
       console.log('killed: ' + playersArray[i].playerName);
       functions.playersKilled.push(playersArray[i]);
       io.to(playersArray[i].socketId).emit('exitVote');
+
+      var title = 'Player Died';
+      var text = `The journey has ended for: ${playersArray[i].playerName}`;
+      var html1 = `<p class='actionHeader'>${title}</p>`;
+      var html2 = `<p class='actionText'>${text}</p>`;
+      actionArr.unshift(html1, html2);
+      
+        for (y = 0; y < playersArray.length; y++) {      
+          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
+        }
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
       playersArray.splice(i,1);
       deaths = true;
-        
     }
 
     if (playersArray[i] !== null && playersArray[i] !== undefined) { // clears all votes to kill / protect
@@ -710,6 +755,11 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     
     var phase = functions.phaseArray[phaseNumber];
 
+      // Hide voting window every round
+      for (i = 0; i < playersArray.length; i++) { // close voting for all players
+        io.to(playersArray[i].socketId).emit('exitVote');
+        // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
+      }
 
     // Execute specific code on phase end.
 
@@ -719,55 +769,68 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
       console.log('end of lobby, allowPlayers now false');
       srv.emit(`roleInit`); // 
       srv.emit(`chatroomsInit`);
+      srv.emit(`detectiveInit`);
 
     } else if (data.phase.phaseName == 'night'){
       
       srv.emit('actionVote', {}); // action night vote
 
     } else if (data.phase.phaseName == 'day'){
-      
-      
+    
 
     } else if (data.phase.phaseName == 'vote'){
      
       srv.emit('actionVote', {}); // action group vote 
 
-    }
-
-    // Hide voting window every round
-    for (i = 0; i < playersArray.length; i++) { // close voting for all players
-      io.to(playersArray[i].socketId).emit('exitVote');
-      // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
-    }
-
-    // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
-
-    if (data.phase.phaseName == 'revote') { // revote end
+    } else if (data.phase.phaseName == 'revote') { // revote end
 
       srv.emit('actionVote', {}); // action group vote
 
       console.log('revote ended');
     }
 
-    if (phaseNumber < 3) {
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      phaseNumber++
-      srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
+
+
+
+
+    // Round System, cycles through main phases until max rounds is hit. Need to implement win condition check to break cycle earlier
+
+    console.log('winstatus2   '+ functions.winConditions());
+   
+    if (functions.winConditions() !== true) {
+
+      if (phaseNumber < 3) {
+        //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+        phaseNumber++
+        srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
       
-      
-    } else if (roundNumber < maxRounds) { // Next round  
-      //console.log(`Round ${roundNumber} Complete!`);
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      roundNumber++;
-      phaseNumber = 1;
-      srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
-    } else { // End Game
-      //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
-      console.log('Game Over');
-      roundNumber = 0;
-      phaseNumber = 0;
-      checkNum = -1 // game ended and can be restarted now
+      } else { // Next round  
+        //console.log(`Round ${roundNumber} Complete!`);
+        //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+        roundNumber++;
+        phaseNumber = 1;
+        srv.emit(`phaseStart`,  { phase: phase }); // Next Phase
+      }
+    }  
+  
+    if (functions.winConditions() == true) { // End Game
+    //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
+    console.log('Game Over');
+
+    if (functions.civilWin() == true) {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
+    } else if (functions.mafiaWin() == true) {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
+    } else {
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who one? i'm unsure. please report this error!`, kill: false });
     }
+
+    roundNumber = 0;
+    phaseNumber = 0;
+    checkNum = -1 // game ended and can be restarted now
+
+  }
+
 
   }, data.phase.phaseDuration*1000); // after this long
 });
