@@ -27,7 +27,7 @@ const chatroomsArray = []; // stores chatrooms that a user has access to
 // CLASSES
 
 const Player = class {
-    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget){
+    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom){
         this.playerId = playerId;
         this.socketId = socketId;
         this.playerName = playerName;
@@ -37,6 +37,7 @@ const Player = class {
         this.playerVotesFor = playerVotesFor;
         this.killTarget = killTarget;
         this.protectTarget = protectTarget;
+        this.currentChatRoom = currentChatRoom;
         playerId = 0;
     }
 }
@@ -243,7 +244,7 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false);
+    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general');
     playersArray.push(x);
     console.log(`Player ${playerId} connected (${socketId})`); // debug only
     output = `Player ${playerId} connected (${socketId})`;

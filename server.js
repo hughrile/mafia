@@ -33,6 +33,14 @@ var socketArray = []; // global sockets array
 // var roomsArray = []; // global rooms array
 const actionArr = [];
 
+//chatRoom
+const generalChatRoom = [];
+const mafiaChatRoom = [];
+const doctorChatRoom = [];
+const infectedChatRoom = [];
+var chatRooms = { generalChatRoom:generalChatRoom, mafiaChatRoom:mafiaChatRoom, doctorChatRoom:doctorChatRoom, infectedChatRoom:infectedChatRoom }
+// `${roomName}chatRoom`
+
 var allowPlayers = true;
 var gameStarted = false;
 
@@ -150,14 +158,26 @@ io.on('connection', socket => { // connection start
 
     var message = data.message;
     var playerName = playersArray[functions.getPlayerBySocket(socket.id)].playerName;
+    var roomName = playersArray[functions.getPlayerBySocket(socket.id)].currentChatRoom;
+    var chatRoom = chatRooms[`${roomName}ChatRoom`];
 
+    chatRoom.push(`<p> ${playerName}: ${message}</p>`);
 
-    socket.broadcast.emit('messageAlert');
+    for (i=0; i < playersArray.length; i++) {
+      if (playersArray[i].currentChatRoom == roomName) {
+        io.to(playersArray[i].socketId).emit('chatRoomUpdate', { chatRoom });
+      }
+    }
 
+    // send to all currently in chatroom
+
+    //socket.broadcast.emit('messageAlert');
+/*
     io.sockets.emit('chat', {
       message: message,
       playerName: playerName
     });
+*/
   });
 
 
@@ -232,18 +252,23 @@ io.on('connection', socket => { // connection start
 
 
     if (allowPlayers === false) {
-      playerRooms = functions.chatroomsGet(socket.id); // get current room access
-      var roomTrigger = playerRooms[`${data.index}`]; // get room allowed      
-
+      var playerRooms = functions.chatroomsGet(socket.id); // get current room access
+      var roomTrigger = playerRooms[`${data.index}`]; // get room allowed (no verified, FORCED)
+      var status;
       if (roomTrigger !== '') {
         status = true;
+        var player = playersArray[functions.getPlayerBySocket(socket.id)]
+        player.currentChatRoom = roomTrigger;
+        var chatRoom = chatRooms[`${player.currentChatRoom}ChatRoom`];
+
+        socket.emit('chatRoomUpdate', { chatRoom });
+
+
+        //io.to().emit('chatRoomUpdate', {  });
+        
       } else {
         status = false; // reject any unexpected selections
       }
-  
-      // console.log(playerRooms);
-      // console.log(roomTrigger);
-      console.log(status);
 
       socket.emit('chatroomsVerify', {
         verified: status
@@ -390,7 +415,7 @@ srv.on('roleInit', function() {
 srv.on('chatroomsInit', function() {
   for (i = 0; i < socketArray.length; i++) { 
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
-  playerRooms = functions.chatroomsGet(socket.socketId);
+  var playerRooms = functions.chatroomsGet(socket.socketId);
   if (socket !== undefined && socket !== null) {
     io.to(socket.socketId).emit('chatroomsInit', {
       playerRooms: playerRooms
@@ -819,10 +844,32 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
     if (functions.civilWin() == true) {
       io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
+
+      var title = 'Game Over';
+      var text = `The game is finished, civilians have one the game!`;
+      var html1 = `<p class='actionHeader'>${title}</p>`;
+      var html2 = `<p class='actionText'>${text}</p>`;
+      actionArr.unshift(html1, html2);
+      
+        for (y = 0; y < playersArray.length; y++) {      
+          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
+        }
+
     } else if (functions.mafiaWin() == true) {
       io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
+
+      var title = 'Game Over';
+      var text = `The game is finished, the Mafia have won the game!`;
+      var html1 = `<p class='actionHeader'>${title}</p>`;
+      var html2 = `<p class='actionText'>${text}</p>`;
+      actionArr.unshift(html1, html2);
+      
+        for (y = 0; y < playersArray.length; y++) {      
+          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
+        }
+
     } else {
-      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who one? i'm unsure. please report this error!`, kill: false });
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who won? i'm unsure. please report this error!`, kill: false });
     }
 
     roundNumber = 0;

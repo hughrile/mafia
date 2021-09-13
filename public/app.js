@@ -134,7 +134,7 @@ for (i=0; i < indexBtn.length; i++) {
 var roomNameInput = document.getElementById('roomNameInput');
 var createButton = document.getElementById('createButton');
 
-createButton.addEventListener('click', function(){ // On clicking chat button
+createButton.addEventListener('click', function(){
     socket.emit('createRoom', {
         roomName: roomNameInput.value
     });
@@ -352,6 +352,7 @@ btn.addEventListener('click', function(){ // On clicking chat button
     socket.emit('chat', {
         message: message.value
     });
+    message.value = '';
 });
 
 message.addEventListener("keyup", function(event) {
@@ -369,6 +370,16 @@ socket.on('actionUpdate', function(data){
     } 
     alertArr0.style.display = 'inline';
 });
+
+socket.on('chatRoomUpdate', function(data){
+    var chatRoom = data.chatRoom;
+    output.innerHTML = '';
+    for (i = 0; i < chatRoom.length; i++) {
+        output.innerHTML += chatRoom[i];
+    } 
+});
+
+
 
 
 
@@ -460,11 +471,11 @@ socket.on('chatroomsVerify', function(data){
 })
 
 
-// Listen for events
+/* Listen for events
 socket.on('chat', function(data){ // place message in chat
     output.innerHTML += `<p> ${data.playerName}: ${data.message}</p>`;
     message.value = '';
-});
+});*/
 
 socket.on('messageAlert', function(data){ // place message in chat
     alertArr2.style.display = 'inline';
