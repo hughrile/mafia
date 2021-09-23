@@ -22,33 +22,29 @@ app.use(bodyParser.urlencoded({
 
 // Server state variables
 var checkNum = -1;
-var voteNum = 0;
-var gVcounter = 0;
 var phaseNumber = 1; // used to trigger next phase in a cycle, not reliable as the current value
 var roundNumber = 1;
-var maxRounds = 500; // Must be optional
+// var maxRounds = 500; // Must be optional
 var serverHost;
 var roomno = 1; // room variable
 var socketArray = []; // global sockets array
-// var roomsArray = []; // global rooms array
-const actionArr = [];
+var actionArr = [];
 
 //chatRoom
-const generalChatRoom = [];
-const mafiaChatRoom = [];
-const doctorChatRoom = [];
-const infectedChatRoom = [];
-var chatRooms = { generalChatRoom:generalChatRoom, mafiaChatRoom:mafiaChatRoom, doctorChatRoom:doctorChatRoom, infectedChatRoom:infectedChatRoom }
+var generalChatRoom = [];
+var mafiaChatRoom = [];
+var doctorChatRoom = [];
+var infectedChatRoom = [];
+var chatRooms = { generalChatRoom:generalChatRoom, mafiaChatRoom:mafiaChatRoom, doctorChatRoom:doctorChatRoom, infectedChatRoom:infectedChatRoom };
 // `${roomName}chatRoom`
 
 var allowPlayers = true;
-var gameStarted = false;
 
 var phaseTimer;
 var phaseTimeOut;
-var voteTimeOut;
+// var voteTimeOut;
 
-var spectatorTotal = 0;
+
 
 // import the functions module
 let functions = require('./public/function.js');
@@ -72,6 +68,8 @@ io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
+    socket.emit('header', { header: 'Welcome' });
+
     functions.userCreate(socket.id);
     socketArray.push(socket.id);
     io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
@@ -91,7 +89,6 @@ io.on('connection', socket => { // connection start
   } else { // Connect as spectator
 
     console.log(`Spectator connected`);
-    spectatorTotal++;
     // push number of specs to app.js?
     io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
 
@@ -100,7 +97,6 @@ io.on('connection', socket => { // connection start
   console.log(`${socketArray.length} instances connected`);
 
   socket.on('disconnecting', () => {
-
 
    if (functions.isSpectator(socket.id) == true) {
 
@@ -133,6 +129,12 @@ io.on('connection', socket => { // connection start
       }
       
     }
+
+    if (socketArray.length == 0) {
+      srv.emit('resetGame');
+      console.log('resetGame (0 players on disconnect)');
+      return;
+}
 
     // console.log(socket.rooms); // the Set contains at least the socket ID
 
@@ -301,19 +303,7 @@ io.on('connection', socket => { // connection start
       socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
-    } /*else {
-      // Create new player
-      console.log(`Does not exist yet, something is broken :(`);
-      console.log(socketArray.length);
-      functions.userCreate(socket.id);
-      io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-    }*/
-
-/*
-    io.sockets.emit('chat', { message: functions.userCreate(socketArray[socketExists()], data.user) }); // use this to update name of existing player instead of just creating one
-    socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
-    io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-*/
+    }
   });
 
   socket.on('gameBtn', function(data){
@@ -347,8 +337,6 @@ io.on('connection', socket => { // connection start
 srv.on('gameStart', function(data){ // game logic 2.0
   
   checkNum = data.checkNum;
-
-  var groupVoteDuration = data.groupVoteDuration;
 
   if (checkNum == 0) {
         
@@ -398,7 +386,6 @@ srv.on('roleInit', function() {
 
   functions.fillCivilians();
   functions.initRoleAssign();
-  //functions.initTeamAssign();
 
     for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
@@ -415,8 +402,10 @@ srv.on('roleInit', function() {
 srv.on('chatroomsInit', function() {
   for (i = 0; i < socketArray.length; i++) { 
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
-  var playerRooms = functions.chatroomsGet(socket.socketId);
+  var playerRooms;
+
   if (socket !== undefined && socket !== null) {
+    playerRooms = functions.chatroomsGet(socket.socketId);
     io.to(socket.socketId).emit('chatroomsInit', {
       playerRooms: playerRooms
     });
@@ -425,9 +414,12 @@ srv.on('chatroomsInit', function() {
 });
 
 srv.on('detectiveInit', function() {
+
+  console.log('socketno:' + socketArray.length);
+
   for (i = 0; i < socketArray.length; i++) { 
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
-  if (socket.playerRole == 'detective') {
+  if (socket !== undefined && socket.playerRole == 'detective') {
     io.to(socket.socketId).emit('detectiveInit');
   }
   }
@@ -769,7 +761,6 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
   } else if (data.phase.phaseName == 'vote') {
 
     srv.emit(`startVote`, { phase: data.phase, target: 'all', action: 'kill', type: 'group' }); // type: groupVote
-    gVcounter++
 
   }
 
@@ -788,13 +779,20 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
     // Execute specific code on phase end.
 
+    if (socketArray.length == 0) {
+      srv.emit('resetGame');
+      console.log('resetGame (0 players round end)');
+      return;
+    }
+
     if (data.phase.phaseName == 'lobby'){
 
       allowPlayers = false;
       console.log('end of lobby, allowPlayers now false');
-      srv.emit(`roleInit`); // 
+      srv.emit(`roleInit`);
       srv.emit(`chatroomsInit`);
       srv.emit(`detectiveInit`);
+
 
     } else if (data.phase.phaseName == 'night'){
       
@@ -842,6 +840,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     //console.log(`Phase: ${phaseNumber}, Round: ${roundNumber}`);
     console.log('Game Over');
 
+
     if (functions.civilWin() == true) {
       io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
 
@@ -872,14 +871,45 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
       io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who won? i'm unsure. please report this error!`, kill: false });
     }
 
-    roundNumber = 0;
-    phaseNumber = 0;
-    checkNum = -1 // game ended and can be restarted now
+    //vars
+
+    // Display game over screen
+    
+    // Reset server variables
+
+    // Reset client variables
+
+    srv.emit('resetGame');
+    console.log('resetGame (game over)');
+    return;
 
   }
 
 
   }, data.phase.phaseDuration*1000); // after this long
+});
+
+srv.on('resetGame', function(){
+  console.log('resetGame - triggered');
+
+  // update:
+
+  // action log
+
+  // server variables to change
+  checkNum = -1 // game ended and can be restarted now
+  phaseNumber = 0;
+  roundNumber = 1;
+  allowPlayers = true;
+  generalChatRoom = [];
+  mafiaChatRoom = [];
+  doctorChatRoom = [];
+  infectedChatRoom = [];
+  actionArr = [];
+  
+  // reset all client features:
+
+
 });
 
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`))
