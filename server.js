@@ -896,6 +896,8 @@ srv.on('resetGame', function(){
 
   // action log
 
+  //all playerArray functions (remove all players and make sure init players reoccurs)
+
   // server variables to change
   checkNum = -1 // game ended and can be restarted now
   phaseNumber = 1;
