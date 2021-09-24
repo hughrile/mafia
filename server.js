@@ -898,14 +898,17 @@ srv.on('resetGame', function(){
 
   // server variables to change
   checkNum = -1 // game ended and can be restarted now
-  phaseNumber = 0;
+  phaseNumber = 1;
   roundNumber = 1;
   allowPlayers = true;
-  generalChatRoom = [];
-  mafiaChatRoom = [];
-  doctorChatRoom = [];
-  infectedChatRoom = [];
+  
+
   actionArr = [];
+  
+  chatRooms[`generalChatRoom`] = [];
+  chatRooms[`mafiaChatRoom`] = [];
+  chatRooms[`doctorChatRoom`] = [];
+  chatRooms[`infectedChatRoom`] = [];
   
   // reset all client features:
 

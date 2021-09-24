@@ -109,9 +109,9 @@ head
             button#gameStartBtn.btnBox.widthFull Start Game
 
 
-        #player-listBox
-          p#player-listTitle PLAYERS
-          ul#player-list
+        #playerListBox
+          p#playerListTitle PLAYERS
+          ul#playerList
 
         //#cardUI
           button#exitCard.exitButton
@@ -138,7 +138,7 @@ head
         #usernameConsole.popupWindow
           p#usernameTitle Please enter your name...
           #usernameBox.inputBox
-            input#usernameInput(autocomplete='off' data-lpignore="true" type='text')
+            input#usernameInput(autocomplete='on' data-lpignore="true" type='text')
             button#usernameTriggerBtn &#10148
           
 
@@ -174,16 +174,19 @@ head
         br
         span#nameHeader.txtWhite
 
+
         #groupArr0.panel
           .actionUpdates 
             .actionUpdatesBox
           img#dot1.iconDot(src='./src/iconDot.svg')
-        #groupArr1.panel Role
+
+
+        #groupArr1.panel
+          .roleUpdates 
+            .roleUpdatesBox
           img#dot2.iconDot(src='./src/iconDot.svg')
 
         #groupArr2.panel
-
-          
           #chatConsoleWindow
             #chatroomBtnBox
               button.chatroomBtn#chatroomBtn0 Main
@@ -195,6 +198,7 @@ head
           button#chatConsoleSend Send
 
           img#dot3.iconDot(src='./src/iconDot.svg')
+
 
   .icon1
     img#iconArr0.iconMain.disableSelect(src='./src/action_dark_main.svg' draggable="false")

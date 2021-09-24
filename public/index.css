@@ -272,7 +272,7 @@ padding: 0;
   grid-row: 2 / 3;
   justify-self: center;
   position: relative;
-  display: none;
+  /*display: none;*/
 }
 
 .icon3 {
@@ -411,6 +411,25 @@ padding: 0;
 }
 
 .actionUpdatesBox {
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  overflow-y: scroll;
+  margin: 8px;
+  position: absolute;
+}
+
+.roleUpdates {
+  background-color: var(--UIAC, #515151);
+  width: calc(100% - 16px);
+  height: calc(100% - 32px);
+  margin: 8px;
+  padding-bottom: 0.01px;
+  border-radius: 6px;
+  position: relative;
+
+}
+
+.roleUpdatesBox {
   width: calc(100% - 16px);
   height: calc(100% - 16px);
   overflow-y: scroll;
@@ -867,19 +886,19 @@ display: none;
 }
 
 
-#player-listBox {
+#playerListBox {
  background-color: var(--UIBG, #3C3C3C);
  margin: 20px;
  height: auto;
- width: 140px;
+ width: 160px;
  padding-top: 0.01px;
  padding-bottom: 0.01px;
  border-radius: 14px;
 
- display: none; /*temporary / testing */
+ /*display: none; temporary / testing */
 }
 
-#player-listTitle {
+#playerListTitle {
   font-family: var(--fontMain);
   font-size: 18px;
   font-weight: bolder;
@@ -889,9 +908,15 @@ display: none;
   color: white;
   background-color: var(--UIFG, #1D1D1D);
   border-radius: 6px;
+  transition-duration: 0.3s;
 }
 
-#player-list {
+#playerListTitle:hover, #playerListTitle:active{
+  background-color: rgba(0, 0, 0, 0.85);
+  transition-duration: 0.3s;
+}
+
+#playerList {
   list-style: none;
   font-style: bold;
   font-family: var(--fontMain);
@@ -905,6 +930,7 @@ display: none;
   width: auto;
   height: auto;
   text-align: center;
+  display: none;
 }
 
 .player-listItem {

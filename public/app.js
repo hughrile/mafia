@@ -32,7 +32,7 @@ var roleInit = document.getElementById('roleInit');
 var mainHeader = document.getElementById('mainHeader');
 var header = document.getElementById('mainHeader');
 // Player List DOM
-var playerListOutput = document.getElementById('player-list');
+var playerListOutput = document.getElementById('playerList');
 
 // Timer DOM 
 var timeLeftDisplay = document.getElementById('time-left');
@@ -81,7 +81,8 @@ var actionUpdatesBox = document.querySelector('.actionUpdatesBox');
 var actionHeader = document.querySelector(".actionHeader");
 var actionText = document.querySelector(".actionText");
 
-
+var roleUpdates = document.querySelector('.roleUpdates');
+var roleUpdatesBox = document.querySelector('.roleUpdatesBox');
 
 
 // NewUI
@@ -179,6 +180,8 @@ var alertArr2 = document.getElementById('alertArr2');
 var iconArr2 = document.getElementById('iconArr2');
 var groupArr2 = document.getElementById('groupArr2');
 
+var playerListTitle = document.getElementById('playerListTitle');
+var playerList = document.getElementById('playerList');
 
 var panel = document.getElementsByClassName("panel");
 
@@ -331,7 +334,7 @@ socket.on('exitUsername', function(){ // hide and reset vote window
 });
 
 usernameBtn.addEventListener('click', function(){ // On clicking username button
-    if ((usernameConsole.style.visibility == 'visible')){
+    if (usernameConsole.style.visibility == 'visible'){
         usernameConsole.style.visibility = 'hidden'
         usernameIcon.style.rotate = '270deg';
     } else {
@@ -399,6 +402,18 @@ gameStartBtn.addEventListener('click', function(){ // On clicking start game cou
     socket.emit('exitGameSetup', {
     });
 });
+
+playerListTitle.addEventListener('click', function(){ // On clicking playerList
+    console.log(playerList.style.display);
+
+    if (playerList.style.display !== 'block'){
+        playerList.style.display = 'block';
+    } else {
+        playerList.style.display = 'none'
+    }
+    
+});
+
 
 socket.on('exitGameSetup', function(){ // hide and reset vote window
     gameSetupConsole.style.visibility= 'hidden';
