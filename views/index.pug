@@ -113,6 +113,18 @@ head
           p#playerListTitle PLAYERS
           ul#playerList
 
+        #gameEnd
+          #gameEndBox
+            p#gameEndTitle Game Over
+
+            #gameEndInnerBox1
+              img#gameEndBtn1.iconMain(src='./src/exitIcon_dark.svg' draggable="false")
+              p.gameEndLabel Exit Game
+
+            #gameEndInnerBox2
+              img#gameEndBtn2.iconMain(src='./src/playIcon_dark.svg' draggable="false")
+              p.gameEndLabel Play Again
+
         //#cardUI
           button#exitCard.exitButton
             .exitText &#10006
