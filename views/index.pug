@@ -17,10 +17,13 @@ head
   .indexMain
     .divMain
       .boxMain
+        p.emailAddress mafia@rjhugh.es
         
 
   .indexTitleTextbox
     img#indexTitleText(src='./src/titleText.png')
+    
+    
 
   .indexIcon1
     span.iconIndexText Create
@@ -52,9 +55,14 @@ head
     
 .gameUI
   .main 
-    #divTop.stretchedToMargin
-      #boxTop
+    #divGameTop.stretchedToMargin
+      .boxTop
         img#iconHat.disableSelect(src='./src/hat_dark.svg')
+
+        
+        #playerListBox
+          p#playerListTitle PLAYERS
+          ul#playerList
 
 
         #titleBox
@@ -67,7 +75,7 @@ head
         #gameSetupConsole.popupWindow
           .row
             .column
-              p Duration
+              p.gameSetupHeadings Duration
 
               .inputBox
                 label Lobby
@@ -86,7 +94,7 @@ head
                 input#voteDurInput(type='text' placeholder='15')
 
             .column
-              p Roles
+              p.gameSetupHeadings Roles
 
               .inputBox
                 label Mafia
@@ -109,21 +117,6 @@ head
             button#gameStartBtn.btnBox.widthFull Start Game
 
 
-        #playerListBox
-          p#playerListTitle PLAYERS
-          ul#playerList
-
-        #gameEnd
-          #gameEndBox
-            p#gameEndTitle Game Over
-
-            #gameEndInnerBox1
-              img#gameEndBtn1.iconMain(src='./src/exitIcon_dark.svg' draggable="false")
-              p.gameEndLabel Exit Game
-
-            #gameEndInnerBox2
-              img#gameEndBtn2.iconMain(src='./src/playIcon_dark.svg' draggable="false")
-              p.gameEndLabel Play Again
 
         //#cardUI
           button#exitCard.exitButton
@@ -160,7 +153,7 @@ head
 
           // bottom of screen maybe?
 
-          #lowerMenu
+          //#lowerMenu
 
             button#usernameBtn.lowerBtn Username 
               #usernameIcon &#10148
@@ -228,10 +221,34 @@ head
     #divTasks.stretchedToMargin
       #boxTasks
 
-// .howtoUI
+.gameEndUI
+  .indexMain
     .divMain
       .boxMain
+        #gameEnd
+          #gameEndBox
+            p#gameEndTitle Game Over
+            p#gameEndSubtext
 
+            #gameEndInnerBox1
+              img#gameEndBtn1.iconMain(src='./src/exitIcon_dark.svg' draggable="false")
+              p.gameEndLabel Exit Game
+
+            #gameEndInnerBox2
+              img#gameEndBtn2.iconMain(src='./src/playIcon_dark.svg' draggable="false")
+              p.gameEndLabel Play Again
+
+.howToUI
+  .indexMain
+    .divMain
+      .boxMain
+        #howTo
+          #howToBox
+            #howToHeaderBox
+              p#howToHeader How to play
+            .howToText
+              .howToTextBox
+                p#howToType Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod eros ipsum, id rhoncus dolor consequat sed. Vivamus placerat sapien non nisi vehicula fermentum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla turpis ipsum, fermentum et ante et, vehicula tristique nunc. Aliquam tristique tortor lorem. Aenean interdum sapien at odio tristique, vel volutpat urna facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed metus nunc, egestas efficitur tincidunt quis, feugiat et quam. Nam at velit varius, tempor quam eu, volutpat felis. Donec pellentesque turpis non purus rutrum, vitae luctus augue convallis.Nam at blandit dolor. Fusce consectetur justo ut ligula ullamcorper elementum. Ut id nibh orci. Duis eget tincidunt leo. Curabitur tristique nibh nisl, eget iaculis quam lobortis sit amet. Maecenas a sem at mauris lacinia consectetur. Pellentesque sem quam, varius non eros sit amet, laoreet lacinia justo. Cras facilisis ultrices congue. Integer ultrices placerat urna, ultricies venenatis nisl ornare id. Vivamus id interdum mauris. Cras sed lobortis risus, nec euismod turpis. Duis fermentum eget risus non laoreet. Mauris vel est sodales, aliquet urna vitae, sollicitudin dui. Pellentesque dapibus eleifend lorem, vitae lobortis augue cursus et. Donec tempor, nisl id pretium ultrices, nisi odio gravida ipsum, eget commodo lacus lectus ac lorem. Aliquam vulputate orci ac dolor pellentesque, id viverra arcu fermentum.Nullam sed sodales dui. Maecenas non velit vitae dui vehicula pulvinar. Maecenas lacinia, ligula in elementum malesuada, velit dolor posuere enim, in eleifend sapien tellus sed velit. Cras sed turpis erat. Etiam a faucibus odio. Pellentesque dictum, felis vitae suscipit tincidunt, diam augue semper enim, id mattis ligula magna vitae dui. Cras viverra tellus est, id interdum libero dignissim nec. Cras sed ornare velit. Aenean placerat fermentum quam in interdum. Nulla vitae pellentesque lorem. Donec eleifend sem dignissim ex molestie, a porta sapien feugiat. Ut at condimentum metus, eget consectetur lectus. Sed lobortis dapibus nulla. Ut vestibulum, libero eu ornare interdum, ante turpis accumsan sapien, ut vulputate sapien nisi bibendum tellus. 
 
 // .aboutUI
     .divMain

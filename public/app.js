@@ -22,8 +22,8 @@ var gameStartBtn = document.getElementById('gameStartBtn');
 var usernameConsole = document.getElementById('usernameConsole');
 var usernameInput = document.getElementById('usernameInput');
 var usernameTriggerBtn = document.getElementById('usernameTriggerBtn');
-var usernameBtn = document.getElementById('usernameBtn'); // to show the username panel
-var usernameIcon = document.getElementById('usernameIcon'); //
+//var usernameBtn = document.getElementById('usernameBtn'); // to show the username panel
+//var usernameIcon = document.getElementById('usernameIcon'); //
 
 
 var showVote = document.getElementById('showVoteGUI');
@@ -89,6 +89,8 @@ var roleUpdatesBox = document.querySelector('.roleUpdatesBox');
 var indexUI = document.querySelector(".indexUI");
 var createUI = document.querySelector(".createUI");
 var gameUI = document.querySelector(".gameUI");
+var gameEndUI = document.querySelector(".gameEndUI");
+
 
 // Initial display
 // Show layout (show + Wrapper/UI Name)
@@ -119,6 +121,7 @@ for (i=0; i < indexBtn.length; i++) {
                 // console.log('Join Button');
                 indexUI.style.display = "none";
                 gameUI.style.display = "grid";
+                socket.emit('joinGame');
             } else if (index == 2) {
                 // console.log('Howto Button');
                 // indexUI.style.display = "none";
@@ -229,7 +232,48 @@ for (i=0; i < iconArr.length; i++) {
     })());
 }
 
+socket.on('closePanels', function() {
+    for(var x = 0; x < panel.length; x++) {
+        panel[x].style.display = "none";
+    }
+})
 
+socket.on('alertsClear', function() {
+    for (i=0; i < iconArr.length; i++) {
+        alertArr[i].style.display = "none";
+    }
+});
+
+// gameEndUI
+
+var gameEndExitBtn = document.getElementById('gameEndBtn1');
+var gameEndPlayBtn = document.getElementById('gameEndBtn2');
+
+var gameEndTitle = document.getElementById('gameEndTitle');
+var gameEndSubtext = document.getElementById('gameEndSubtext');
+
+socket.on('gameEndUI', function() {
+    gameUI.style.display = "none";
+    gameEndUI.style.display = "grid";
+    idHeader.style.display = 'none';
+    idHeader.style.display = 'none';
+});
+
+gameEndExitBtn.addEventListener('click', function(){
+    gameEndUI.style.display = "none";
+    indexUI.style.display = "grid";
+});
+
+gameEndPlayBtn.addEventListener('click', function(){
+    gameEndUI.style.display = "none";
+    gameUI.style.display = "grid";
+    socket.emit('joinGame');
+});
+
+socket.on('gameEndPopup', function(data){
+    gameEndTitle.innerHTML = data.title;
+    gameEndSubtext.innerHTML = data.text;
+});
 
 // howtoUI -> index(return)
 
@@ -242,7 +286,7 @@ for (i=0; i < iconArr.length; i++) {
 
 
 var magicToggle = function(triggerID, className) {
-    triggerID.addEventListener('click', function(){ // On clicking username button
+    triggerID.addEventListener('click', function(){
         for(var i = 0; i < className.length; i++) {    
           if (className[i].style.display !== "none") {
             className[i].style.display = "none";
@@ -326,13 +370,14 @@ usernameTriggerBtn.addEventListener('click', function(){ // On clicking username
         user: usernameInput.value,
         socket: socket.id
     });
-    usernameIcon.style.rotate = '270deg';
+    //usernameIcon.style.rotate = '270deg';
 }); // do an if statement to block out innapropriate or existing words
 
 socket.on('exitUsername', function(){ // hide and reset vote window
     usernameConsole.style.visibility= 'hidden';
 });
 
+/*
 usernameBtn.addEventListener('click', function(){ // On clicking username button
     if (usernameConsole.style.visibility == 'visible'){
         usernameConsole.style.visibility = 'hidden'
@@ -342,7 +387,7 @@ usernameBtn.addEventListener('click', function(){ // On clicking username button
         usernameIcon.style.rotate = '90deg';
     }
 });
-
+*/
 
 /*
 roleInit.addEventListener('click', function(){ // On clicking show card button
@@ -380,6 +425,10 @@ socket.on('chatRoomUpdate', function(data){
     for (i = 0; i < chatRoom.length; i++) {
         output.innerHTML += chatRoom[i];
     } 
+});
+
+socket.on('chatRoomUpdateAll', function(){
+    output.innerHTML = '';
 });
 
 
@@ -551,7 +600,6 @@ socket.on('showVote', function(data){ // show card
 
 
 exitVote.addEventListener('click', function(){
-    console.log(voteSelect.innerHTML);
     socket.emit('exitVote', { // for verification ONLY
         vote: voteSelect.innerHTML
     });
@@ -587,6 +635,10 @@ socket.on('showEvent', function(data){
     }
 });
 
+socket.on('exitEvent', function(){
+    gameEventGUI.style.visibility= 'hidden';
+});
+
 
 
 socket.on('showCard', function(){ // show card
@@ -606,3 +658,4 @@ socket.on('exitCard', function(){ // show card
     cardUI.style.visibility= 'hidden';
 });
 */
+

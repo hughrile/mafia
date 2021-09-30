@@ -19,8 +19,8 @@ const playersArray = [];
 const rolesArray = [];
 const phaseArray = [];
 const availableRoles = []; // for role inti
-const suspectsRevealed = []; // for detective
-const playersKilled = []; // for taxidermist to take over
+const suspectsRevealed = []; // for detective HASNT BEEN USED
+const playersKilled = []; // for taxidermist to take over HASNT BEEN USED
 const chatroomsArray = []; // stores chatrooms that a user has access to
 
 
@@ -357,6 +357,14 @@ var roleExists = function(role) {
   }
 }
 
+var playerExists = function(socket) {
+    for(i = 0;i < playersArray.length;i++){
+        if(playersArray[i].socketId == socket){
+          return true;
+      }
+  }
+}
+
     //function
 var availableRolesInit = function(input, name) {
     roleArrayIndex = getRoleNumByName(name);
@@ -476,6 +484,16 @@ var chatroomsGet = function(socketID) { // output rooms object as an array
     return rooms;
 }
 
+var clearArray = function(arrayToClear) {
+        arrayToClear.splice(0, arrayToClear.length);
+}
+
+var resetPlayers = function() {
+    clearArray(playersArray);
+    clearArray(chatroomsArray);
+    clearArray(availableRoles);
+}
+
 
 
 
@@ -586,6 +604,7 @@ module.exports = {
     isSpectator: isSpectator,
     //isHost: isHost,
     roleExists: roleExists,
+    playerExists: playerExists,
     getMode: getMode,
     fillCivilians: fillCivilians,
     availableRolesInit: availableRolesInit,
@@ -597,5 +616,8 @@ module.exports = {
 
     winConditions: winConditions,
     civilWin: civilWin,
-    mafiaWin: mafiaWin
+    mafiaWin: mafiaWin,
+
+    clearArray: clearArray,
+    resetPlayers: resetPlayers
 }

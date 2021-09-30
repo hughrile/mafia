@@ -213,7 +213,7 @@ io.on('connection', socket => { // connection start
   socket.on('serverHost', function(){
     
     if (socket.id == serverHost.socketId) {
-      socket.emit('serverHost')
+      socket.emit('serverHost');
     }
   });
 
@@ -223,15 +223,15 @@ io.on('connection', socket => { // connection start
   });
 */
   socket.on('exitCard', function(){
-    socket.emit('exitCard')
+    socket.emit('exitCard');
   });
 
   socket.on('exitEvent', function(){
-    socket.emit('exitEvent')
+    socket.emit('exitEvent');
   });
 
   socket.on('exitGameSetup', function(){
-    socket.emit('exitGameSetup')
+    socket.emit('exitGameSetup');
   });
 
   socket.on('createRoom', function(data){
@@ -245,6 +245,28 @@ io.on('connection', socket => { // connection start
       roomId: roomId,
       roomName: roomName
     });
+  });
+
+  socket.on('joinGame', function() {
+    if (functions.playerExists(socket.id) !== true && allowPlayers == true) {
+      functions.userCreate(socket.id);
+      io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
+    } else if (allowPlayers !== true) {
+      console.log(`Spectator connected`);
+      // push number of specs to app.js?
+      io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
+    }
+
+    if (serverHost === undefined || serverHost === '') { // first player becomes host
+      serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
+      //console.log('server host applied to ' + serverHost.playerName);
+      setTimeout(function(){
+        if (socket.id == serverHost.socketId) {
+          socket.emit('serverHost')
+        }
+      }, 2000);
+    }
+    console.log(`${socketArray.length} instances connected`);
   });
 
 
@@ -842,33 +864,13 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
 
     if (functions.civilWin() == true) {
-      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, civilians have one the game!`, kill: false });
-
-      var title = 'Game Over';
-      var text = `The game is finished, civilians have one the game!`;
-      var html1 = `<p class='actionHeader'>${title}</p>`;
-      var html2 = `<p class='actionText'>${text}</p>`;
-      actionArr.unshift(html1, html2);
-      
-        for (y = 0; y < playersArray.length; y++) {      
-          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
-        }
+      io.sockets.emit('gameEndPopup', { title: 'Game Over', text: `The <i>civilians</i> have won`});
 
     } else if (functions.mafiaWin() == true) {
-      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, the Mafia have won the game!`, kill: false });
-
-      var title = 'Game Over';
-      var text = `The game is finished, the Mafia have won the game!`;
-      var html1 = `<p class='actionHeader'>${title}</p>`;
-      var html2 = `<p class='actionText'>${text}</p>`;
-      actionArr.unshift(html1, html2);
-      
-        for (y = 0; y < playersArray.length; y++) {      
-          io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
-        }
+      io.sockets.emit('gameEndPopup', { title: 'Game Over', text: `The <i>Mafia</i> have won`});
 
     } else {
-      io.sockets.emit('showEvent', { title: 'Game Over', text: `The game is finished, who won? i'm unsure. please report this error!`, kill: false });
+      io.sockets.emit('showEvent', { title: 'Game Over', text: `Somebody won the game`});
     }
 
     //vars
@@ -882,7 +884,6 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
     srv.emit('resetGame');
     console.log('resetGame (game over)');
     return;
-
   }
 
 
@@ -896,25 +897,38 @@ srv.on('resetGame', function(){
 
   // action log
 
-  //all playerArray functions (remove all players and make sure init players reoccurs)
-
   // server variables to change
+
+  serverHost = '';
   checkNum = -1 // game ended and can be restarted now
   phaseNumber = 1;
   roundNumber = 1;
   allowPlayers = true;
   
 
-  actionArr = [];
+
   
   chatRooms[`generalChatRoom`] = [];
   chatRooms[`mafiaChatRoom`] = [];
   chatRooms[`doctorChatRoom`] = [];
   chatRooms[`infectedChatRoom`] = [];
+  io.sockets.emit('chatRoomUpdateAll');
   
   // reset all client features:
 
-
+  functions.resetPlayers();
+  
+  actionArr = []; // set action array to empty array
+  io.sockets.emit('actionUpdate', { actionArr }); // update action array
+  // detective/ role array = [];
+  // update detective / role array
+  io.sockets.emit('alertsClear'); // clear all alerts
+  io.sockets.emit('exitEvent'); // close event message
+  io.sockets.emit('closePanels');
+  io.sockets.emit('header', { header: 'Welcome' });
+  io.sockets.emit('exitGameSetup'); // close setup console
+  io.sockets.emit('gameEndUI');
+  console.log('done');
 });
 
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`))
