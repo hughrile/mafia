@@ -68,9 +68,10 @@ io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
-    socket.emit('header', { header: 'Welcome' });
+    // socket.emit('header', { header: 'Welcome' });
 
     functions.userCreate(socket.id);
+    console.log('userCreate 1 fired');
     socketArray.push(socket.id);
     io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
     
@@ -88,7 +89,7 @@ io.on('connection', socket => { // connection start
 
   } else { // Connect as spectator
 
-    console.log(`Spectator connected`);
+    console.log(`Spectator connected 1`);
     // push number of specs to app.js?
     io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
 
@@ -247,15 +248,23 @@ io.on('connection', socket => { // connection start
     });
   });
 
-  socket.on('joinGame', function() {
-    if (functions.playerExists(socket.id) !== true && allowPlayers == true) {
+
+  // new player
+
+
+
+
+  socket.on('joinGame', function() { // on clicking the "join" menu button, either reconnect the game or join a new one
+    if (functions.playerExists(socket.id) !== true && allowPlayers == true) { // new player allowed to join
       functions.userCreate(socket.id);
+      console.log('userCreate 2 fired');
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-    } else if (allowPlayers !== true) {
-      console.log(`Spectator connected`);
+
+    } else if (functions.playerExists(socket.id) !== true && allowPlayers == false) { // new player as spectator
+      console.log(`Spectator connected 2`);
       // push number of specs to app.js?
       io.to(socket.id).emit('showEvent', { title: 'Joined as spectator', text: `You will be able to play the next round.`, kill: true });
-    }
+     }
 
     if (serverHost === undefined || serverHost === '') { // first player becomes host
       serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
@@ -322,7 +331,7 @@ io.on('connection', socket => { // connection start
       var player = playersArray[functions.getPlayerBySocket(socket.id)];
       console.log(`${player.playerName} username -> ${data.user}`);
       player.playerName = data.user;
-      socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
+      // socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
     }
@@ -925,7 +934,7 @@ srv.on('resetGame', function(){
   io.sockets.emit('alertsClear'); // clear all alerts
   io.sockets.emit('exitEvent'); // close event message
   io.sockets.emit('closePanels');
-  io.sockets.emit('header', { header: 'Welcome' });
+  // io.sockets.emit('header', { header: 'Welcome' });
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
   console.log('done');
