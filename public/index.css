@@ -1113,6 +1113,10 @@ display: none;
   padding: 6px;
 }
 
+.serverHostItem {
+  list-style: circle;
+}
+
 
 .votes {
   color: rgb(194, 0, 0);

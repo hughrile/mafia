@@ -68,16 +68,15 @@ io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
-    // socket.emit('header', { header: 'Welcome' });
+    socket.emit('header', { header: 'Welcome.' });
 
     functions.userCreate(socket.id);
     console.log('userCreate 1 fired');
     socketArray.push(socket.id);
-    io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
     
-
     if (serverHost === undefined || serverHost === '') { // first player becomes host
-      serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
+      serverHost = playersArray[functions.getPlayerBySocket(socket.id)];
+      functions.updateLead(serverHost.socketId);
       //console.log('server host applied to ' + serverHost.playerName);
       setTimeout(function(){
         if (socket.id == serverHost.socketId) {
@@ -86,6 +85,7 @@ io.on('connection', socket => { // connection start
       }, 2000);
     }
 
+    io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
   } else { // Connect as spectator
 
@@ -117,6 +117,8 @@ io.on('connection', socket => { // connection start
       console.log('Host disconnected');
       if (playersArray.length >=1) {
         serverHost = playersArray[0];
+        functions.updateLead(serverHost.socketId);
+        io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
         //console.log('server host applied to ' + serverHost.playerName);
         if (checkNum == -1) { // player can become host at anytime but wont have popup if game is started
           setTimeout(function(){
@@ -216,6 +218,7 @@ io.on('connection', socket => { // connection start
     if (socket.id == serverHost.socketId) {
       socket.emit('serverHost');
     }
+    io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
   });
 
   /*
@@ -269,6 +272,8 @@ io.on('connection', socket => { // connection start
     if (serverHost === undefined || serverHost === '') { // first player becomes host
       serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
       //console.log('server host applied to ' + serverHost.playerName);
+      functions.updateLead(serverHost.socketId);
+      io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
       setTimeout(function(){
         if (socket.id == serverHost.socketId) {
           socket.emit('serverHost')
@@ -332,8 +337,18 @@ io.on('connection', socket => { // connection start
       console.log(`${player.playerName} username -> ${data.user}`);
       player.playerName = data.user;
       // socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
-      io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
+      if (player.playerRole == "") {
+        io.to(player.socketId).emit('nameUIUpdate', {
+          name: player.playerName,
+        });      
+      } else {
+        io.to(player.socketId).emit('roleUIUpdate', {
+          name: player.playerName,
+          role: player.playerRole
+        });      
+      }
+      io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
     }
   });
 
@@ -421,7 +436,7 @@ srv.on('roleInit', function() {
     for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
       if (player !== undefined && player !== null) {
-      io.to(player.socketId).emit('roleInit', {
+      io.to(player.socketId).emit('roleUIUpdate', {
         name: player.playerName,
         role: player.playerRole
       });        
@@ -934,7 +949,7 @@ srv.on('resetGame', function(){
   io.sockets.emit('alertsClear'); // clear all alerts
   io.sockets.emit('exitEvent'); // close event message
   io.sockets.emit('closePanels');
-  // io.sockets.emit('header', { header: 'Welcome' });
+  io.sockets.emit('header', { header: 'Welcome.' });
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
   console.log('done');

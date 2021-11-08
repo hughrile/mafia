@@ -27,7 +27,7 @@ const chatroomsArray = []; // stores chatrooms that a user has access to
 // CLASSES
 
 const Player = class {
-    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom){
+    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom, playerLead){
         this.playerId = playerId;
         this.socketId = socketId;
         this.playerName = playerName;
@@ -38,6 +38,7 @@ const Player = class {
         this.killTarget = killTarget;
         this.protectTarget = protectTarget;
         this.currentChatRoom = currentChatRoom;
+        this.playerLead = playerLead;
         playerId = 0;
     }
 }
@@ -244,7 +245,7 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general');
+    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general', false);
     playersArray.push(x);
     console.log(`Player ${playerId} connected (${socketId})`); // debug only
     output = `Player ${playerId} connected (${socketId})`;
@@ -340,15 +341,7 @@ var isSpectator = function(socketID) {
         return false;
     }
 }
-/*
-var isHost = function(hostId) {
-    for(i = 0;i < playersArray.length;i++){
-        if(playersArray[i].socketId == hostId){
-          return true;
-      }
-  }
-}
-*/
+
 var roleExists = function(role) {
     for(i = 0;i < playersArray.length;i++){
         if(playersArray[i].playerRole == role){
@@ -380,19 +373,38 @@ var getRndInteger = function(min, max) { // GENERATES RND VAL BETWEEN MIN + MAX
 
 // Player lists
 
+var updateLead = function(socket) { // remove lead from existing players and update to new lead
+    console.log('-----------------  fired updateLead');
+    for(i = 0;i < playersArray.length;i++){
+        playersArray[i].playerLead = 'false';
+        console.log(playersArray[i].playerName +': playerlead-  '+ playersArray[i].playerLead);
+    }
+    playersArray[getPlayerBySocket(socket)].playerLead = 'true';
+    console.log(playersArray[i].playerName +': playerlead-  '+ playersArray[i].playerLead);
+}
+
 function playerListUpdate() {
     var playerList = '';
     for (i = 0; i < playersArray.length; i++) {
         var name = playersArray[i].playerName;
         var vote = playersArray[i].playerVotes;
 
-        if (vote === undefined || vote === null) {
-            playerList += `<li class='playerListItem'> ${name} </li>`;
-        } else
-        playerList += `<li> ${name} - <span class='votes'>${vote}</span> </li>`;
+        if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
+            if (vote === undefined || vote === null) {
+                console.log('show a dot');
+                playerList += `<li style="color:gold" class='playerListItem'>${name}</li>`;
+            } else
+            playerList += `<li style="color:gold" class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+        } else { // if player is not lead don't show a lil dot
+            if (vote === undefined || vote === null) {
+                console.log('no show a dot');
+                playerList += `<li class='playerListItem'> ${name} </li>`;
+            } else
+            playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+        }
     }
     return playerList;
-}
+} // style="list-style-image:url('./src/iconDot.svg')"
 
 var getPlayerVote = function() { // called by the generated buttons
     //testing only
@@ -602,12 +614,12 @@ module.exports = {
     getSocketArray: getSocketArray,
     isSus: isSus,
     isSpectator: isSpectator,
-    //isHost: isHost,
     roleExists: roleExists,
     playerExists: playerExists,
     getMode: getMode,
     fillCivilians: fillCivilians,
     availableRolesInit: availableRolesInit,
+    updateLead: updateLead,
     playerListUpdate: playerListUpdate,
     initRoleAssign: initRoleAssign,
     chatroomsGet: chatroomsGet,

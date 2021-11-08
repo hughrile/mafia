@@ -27,7 +27,6 @@ var usernameTriggerBtn = document.getElementById('usernameTriggerBtn');
 
 
 var showVote = document.getElementById('showVoteGUI');
-var roleInit = document.getElementById('roleInit');
 // Header DOM (delete double instance later)
 var mainHeader = document.getElementById('mainHeader');
 var header = document.getElementById('mainHeader');
@@ -389,12 +388,6 @@ usernameBtn.addEventListener('click', function(){ // On clicking username button
 });
 */
 
-/*
-roleInit.addEventListener('click', function(){ // On clicking show card button
-    socket.emit('roleInit', {
-    });
-});
-*/
 
 btn.addEventListener('click', function(){ // On clicking chat button
     socket.emit('chat', {
@@ -556,8 +549,11 @@ socket.on('gameStart', function(){ // show card
     console.log('game started clientside');
 });
 
-socket.on('roleInit', function(data){ // show card
-    
+socket.on('nameUIUpdate', function(data){ // show card
+    header.innerHTML = `Welcome ${data.name}.`;
+});
+
+socket.on('roleUIUpdate', function(data){ // show card
     header.innerHTML = `${data.name} your role is ${data.role}`;
 });
 
