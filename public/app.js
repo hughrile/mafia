@@ -486,10 +486,15 @@ socket.on('chatroomsInit', function(data){
         }
         chatroomBtnArray[i].style.visibility = visibility;
     }
+    console.log('chatroomsinit tes ****' + data.playerRooms);
 });
 
 socket.on('detectiveInit', function(data){
     icon2.style.display = 'inline';
+});
+
+socket.on('detectiveClear', function(data){
+    icon2.style.display = 'none';
 });
 
 /*

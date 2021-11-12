@@ -11,6 +11,8 @@ const io = require("socket.io")(httpServer, options);
 var bodyParser = require('body-parser');
 var EventEmitter = require("events").EventEmitter;
 
+var errorhandler = require('errorhandler');
+
 var crypto = require("crypto");
 
 app.use(bodyParser.json());
@@ -60,6 +62,14 @@ app.engine('pug', require('pug').__express);
 app.get("/", function(req, res){
 	res.render("index");
 });
+
+
+process.on('uncaughtException', function (exception) {
+  console.log(exception); // to see your exception details in the console
+  // if you are on production, maybe you can send the exception details to your
+  // email as well ?
+});
+
 
 app.use(express.static(path.join(__dirname, "/public")));
 //console.log(crypto.randomBytes(20).toString('hex'));
@@ -125,8 +135,6 @@ io.on('connection', socket => { // connection start
             io.to(serverHost.socketId).emit('serverHost')
         }, 2000);
         }
-
-
       } else {
         serverHost = '';
       }
@@ -435,12 +443,12 @@ srv.on('roleInit', function() {
 
     for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
       var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
-      if (player !== undefined && player !== null) {
+      //if (player !== undefined && player !== null) { // causing the role UI to not update on second game
       io.to(player.socketId).emit('roleUIUpdate', {
         name: player.playerName,
         role: player.playerRole
       });        
-      }
+    //  }
     }
 
 });
@@ -450,18 +458,18 @@ srv.on('chatroomsInit', function() {
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
   var playerRooms;
 
-  if (socket !== undefined && socket !== null) {
+  //if (socket !== undefined && socket !== null) { testing with this out, if no errors then keep it out as seen above
     playerRooms = functions.chatroomsGet(socket.socketId);
     io.to(socket.socketId).emit('chatroomsInit', {
       playerRooms: playerRooms
     });
-  }
+  //}
  }
 });
 
 srv.on('detectiveInit', function() {
 
-  console.log('socketno:' + socketArray.length);
+  // console.log('socketno:' + socketArray.length);
 
   for (i = 0; i < socketArray.length; i++) { 
   var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
@@ -952,7 +960,9 @@ srv.on('resetGame', function(){
   io.sockets.emit('header', { header: 'Welcome.' });
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
+  // io.sockets.emit('chatroomsInit', {playerRooms: ["general","",""]}); (might not be needed, if issue still persists put it back)
+  io.sockets.emit('detectiveClear');
   console.log('done');
 });
 
-httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));

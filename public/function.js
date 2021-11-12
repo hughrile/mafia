@@ -391,13 +391,11 @@ function playerListUpdate() {
 
         if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
             if (vote === undefined || vote === null) {
-                console.log('show a dot');
                 playerList += `<li style="color:gold" class='playerListItem'>${name}</li>`;
             } else
             playerList += `<li style="color:gold" class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
         } else { // if player is not lead don't show a lil dot
             if (vote === undefined || vote === null) {
-                console.log('no show a dot');
                 playerList += `<li class='playerListItem'> ${name} </li>`;
             } else
             playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
