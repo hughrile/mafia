@@ -556,14 +556,17 @@ socket.on('gameStart', function(){ // show card
 
 socket.on('nameUIUpdate', function(data){ // show card
     header.innerHTML = `Welcome ${data.name}.`;
+    console.log('nameUIupdated ' + data.name);
 });
 
 socket.on('roleUIUpdate', function(data){ // show card
     header.innerHTML = `${data.name} your role is ${data.role}`;
+    console.log('roleUIupdated- ' +  `${data.name} your role is ${data.role}`);
 });
 
 socket.on('header', function (data) {
     header.innerHTML = data.header;
+    console.log('headerupdated ' + data.header);
 });
 
 socket.on('playerList', function (data) {

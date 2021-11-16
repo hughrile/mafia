@@ -78,7 +78,7 @@ io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
-    socket.emit('header', { header: 'Welcome.' });
+    socket.emit('header', { header: 'Welcome. 1' });
 
     functions.userCreate(socket.id);
     console.log('userCreate 1 fired');
@@ -266,6 +266,7 @@ io.on('connection', socket => { // connection start
 
 
   socket.on('joinGame', function() { // on clicking the "join" menu button, either reconnect the game or join a new one
+    console.log('before ' + playersArray);
     if (functions.playerExists(socket.id) !== true && allowPlayers == true) { // new player allowed to join
       functions.userCreate(socket.id);
       console.log('userCreate 2 fired');
@@ -288,6 +289,7 @@ io.on('connection', socket => { // connection start
         }
       }, 2000);
     }
+    console.log('after ' + playersArray);
     console.log(`${socketArray.length} instances connected`);
   });
 
@@ -345,18 +347,22 @@ io.on('connection', socket => { // connection start
       console.log(`${player.playerName} username -> ${data.user}`);
       player.playerName = data.user;
       // socket.emit('header', { header: `Welcome to the game <i>${data.user}</i>` });
-
+      console.log(player.playerName + player.playerRole);
       if (player.playerRole == "") {
+        console.log('sent playerUIupdate');
         io.to(player.socketId).emit('nameUIUpdate', {
           name: player.playerName,
         });      
       } else {
+        console.log('sent roleUIupdate');
         io.to(player.socketId).emit('roleUIUpdate', {
           name: player.playerName,
           role: player.playerRole
         });      
       }
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
+    } else {
+      console.log('elsetriggered12');
     }
   });
 
@@ -441,21 +447,28 @@ srv.on('roleInit', function() {
   functions.fillCivilians();
   functions.initRoleAssign();
 
-    for (i = 0; i < socketArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
-      var player = playersArray[functions.getPlayerBySocket(socketArray[i])];
-      //if (player !== undefined && player !== null) { // causing the role UI to not update on second game
-      io.to(player.socketId).emit('roleUIUpdate', {
-        name: player.playerName,
-        role: player.playerRole
-      });        
-    //  }
+/*
+  for (i = 0; i < playersArray.length; i++) {
+    var player = playersArray[i];
+    console.log(player);
     }
+*/
+
+  for (i = 0; i < playersArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
+    var player = playersArray[i];
+    //if (player !== undefined && player !== null) { // causing the role UI to not update on second game
+    console.log('sent header update to '+ player.playerName);
+    io.to(player.socketId).emit('roleUIUpdate', {
+      name: player.playerName,
+      role: player.playerRole
+    });  
+  }
 
 });
 
 srv.on('chatroomsInit', function() {
-  for (i = 0; i < socketArray.length; i++) { 
-  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  for (i = 0; i < playersArray.length; i++) { 
+  var socket = playersArray[i];
   var playerRooms;
 
   //if (socket !== undefined && socket !== null) { testing with this out, if no errors then keep it out as seen above
@@ -468,11 +481,8 @@ srv.on('chatroomsInit', function() {
 });
 
 srv.on('detectiveInit', function() {
-
-  // console.log('socketno:' + socketArray.length);
-
-  for (i = 0; i < socketArray.length; i++) { 
-  var socket = playersArray[functions.getPlayerBySocket(socketArray[i])];
+  for (i = 0; i < playersArray.length; i++) { 
+  var socket = playersArray[i];
   if (socket !== undefined && socket.playerRole == 'detective') {
     io.to(socket.socketId).emit('detectiveInit');
   }
@@ -504,6 +514,7 @@ srv.on('timerStart', function(data){// update timers once immediately
       timeLeft: time,
       phaseTitle: phase.phaseTitle
     });
+    console.log('tick');
   }, 1000);
 });
 
@@ -957,7 +968,19 @@ srv.on('resetGame', function(){
   io.sockets.emit('alertsClear'); // clear all alerts
   io.sockets.emit('exitEvent'); // close event message
   io.sockets.emit('closePanels');
-  io.sockets.emit('header', { header: 'Welcome.' });
+  io.sockets.emit('header', { header: 'Welcome. 2' });
+
+  setTimeout(function(){
+    io.sockets.emit('timerUpdate', {
+      timeLeft: 0,
+      phaseTitle: 'Awaiting host...'
+    });
+    console.log('tock');
+  }, 1000);
+
+
+
+  console.log('beepbppo')
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
   // io.sockets.emit('chatroomsInit', {playerRooms: ["general","",""]}); (might not be needed, if issue still persists put it back)
