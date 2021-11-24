@@ -78,7 +78,7 @@ io.on('connection', socket => { // connection start
 
   if (allowPlayers == true) { // Create unnamed player using socketID
 
-    socket.emit('header', { header: 'Welcome. 1' });
+    socket.emit('header', { header: 'Welcome.' });
 
     functions.userCreate(socket.id);
     console.log('userCreate 1 fired');
@@ -968,7 +968,7 @@ srv.on('resetGame', function(){
   io.sockets.emit('alertsClear'); // clear all alerts
   io.sockets.emit('exitEvent'); // close event message
   io.sockets.emit('closePanels');
-  io.sockets.emit('header', { header: 'Welcome. 2' });
+  io.sockets.emit('header', { header: 'Welcome.' });
 
   setTimeout(function(){
     io.sockets.emit('timerUpdate', {
