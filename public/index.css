@@ -888,7 +888,7 @@ display: none;
 }
 
 #usernameConsole {
-  visibility: hidden;
+  visibility: visible;
   padding: 10px;
   border-radius: 3px;
 }
