@@ -22,7 +22,7 @@ var gameStartBtn = document.getElementById('gameStartBtn');
 var usernameConsole = document.getElementById('usernameConsole');
 var usernameInput = document.getElementById('usernameInput');
 var usernameTriggerBtn = document.getElementById('usernameTriggerBtn');
-//var usernameBtn = document.getElementById('usernameBtn'); // to show the username panel
+var usernameBtn = document.getElementById('usernameBtn'); // to show the username panel
 //var usernameIcon = document.getElementById('usernameIcon'); //
 
 
@@ -243,6 +243,10 @@ socket.on('alertsClear', function() {
     }
 });
 
+socket.on('showNameIcon', function() {
+    usernameBtn.style.visibility = 'visible';
+});
+
 // gameEndUI
 
 var gameEndExitBtn = document.getElementById('gameEndBtn1');
@@ -376,17 +380,15 @@ socket.on('exitUsername', function(){ // hide and reset vote window
     usernameConsole.style.visibility= 'hidden';
 });
 
-/*
+
 usernameBtn.addEventListener('click', function(){ // On clicking username button
     if (usernameConsole.style.visibility == 'visible'){
-        usernameConsole.style.visibility = 'hidden'
-        usernameIcon.style.rotate = '270deg';
+        usernameConsole.style.visibility = 'hidden';
     } else {
-        usernameConsole.style.visibility = 'visible'
-        usernameIcon.style.rotate = '90deg';
+        usernameConsole.style.visibility = 'visible';
+        usernameBtn.style.visibility = 'hidden';
     }
 });
-*/
 
 
 btn.addEventListener('click', function(){ // On clicking chat button

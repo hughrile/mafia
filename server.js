@@ -969,6 +969,7 @@ srv.on('resetGame', function(){
   io.sockets.emit('exitEvent'); // close event message
   io.sockets.emit('closePanels');
   io.sockets.emit('header', { header: 'Welcome.' });
+  io.sockets.emit('showNameIcon');
 
   setTimeout(function(){
     io.sockets.emit('timerUpdate', {

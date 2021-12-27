@@ -341,6 +341,13 @@ padding: 0;
   margin: 8px;
 }
 
+#usernameBtn {
+  display: inline;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
 .iconMain {
   position: relative;
   z-index: 2;
@@ -888,7 +895,7 @@ display: none;
 }
 
 #usernameConsole {
-  visibility: visible;
+  visibility: hidden;
   padding: 10px;
   border-radius: 3px;
 }

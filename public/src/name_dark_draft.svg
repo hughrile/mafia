@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <g id="Group_128" data-name="Group 128" transform="translate(-71 -77)">
+    <g id="Group_126" data-name="Group 126" transform="translate(71 77)">
+      <g id="Group_19" data-name="Group 19">
+        <rect id="Rectangle_80" data-name="Rectangle 80" width="60" height="60" rx="6" fill="#1d1d1d"/>
+        <g id="Group_14" data-name="Group 14">
+          <rect id="Rectangle_61" data-name="Rectangle 61" width="60" height="60" rx="6" fill="#5a5a5a" opacity="0.5"/>
+          <rect id="Rectangle_64" data-name="Rectangle 64" width="48" height="48" rx="6" transform="translate(6 6)" fill="#656565" opacity="0.5"/>
+          <path id="Path_6" data-name="Path 6" d="M0,0H36V36H0Z" transform="translate(12 10.5)" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="Group_127" data-name="Group 127" transform="translate(95 90.5)">
+      <rect id="Rectangle_130" data-name="Rectangle 130" width="3" height="33" rx="1.5" transform="translate(8 33.5) rotate(180)" fill="#fff"/>
+      <rect id="Rectangle_131" data-name="Rectangle 131" width="3" height="12" rx="1.5" transform="translate(12 0.5) rotate(90)" fill="#fff"/>
+      <rect id="Rectangle_132" data-name="Rectangle 132" width="3" height="12" rx="1.5" transform="translate(12 30.5) rotate(90)" fill="#fff"/>
+    </g>
+    <g id="Rectangle_133" data-name="Rectangle 133" transform="translate(85 100)" fill="#4f4f4f" stroke="#fff" stroke-width="1">
+      <rect width="33" height="15" stroke="none"/>
+      <rect x="0.5" y="0.5" width="32" height="14" fill="none"/>
+    </g>
+    <text id="Name" transform="translate(89 111)" fill="#fff" font-size="9" font-family="SegoeUI, Segoe UI"><tspan x="0" y="0">Name</tspan></text>
+  </g>
+</svg>

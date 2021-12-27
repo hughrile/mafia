@@ -59,6 +59,9 @@ head
       .boxTop
         img#iconHat.disableSelect(src='./src/hat_dark.svg')
 
+        img#usernameBtn.iconMain.disableSelect(src='./src/name_dark_draft.svg' draggable="false")
+      
+
         
         #playerListBox
           p#playerListTitle PLAYERS
@@ -139,33 +142,12 @@ head
 
         //button#showCardBtn Show Card
 
-
         #usernameConsole.popupWindow
           p#usernameTitle Please enter your name...
           #usernameBox.inputBox
             input#usernameInput(autocomplete='on' data-lpignore="true" type='text')
             button#usernameTriggerBtn &#10148
           
-
-
-
-
-
-          // bottom of screen maybe?
-
-          //#lowerMenu
-
-            button#usernameBtn.lowerBtn Username 
-              #usernameIcon &#10148
-
-        //br
-        //br
-
-
-
-
-
-
         #timerDisplay
           p
             | Current Phase: 
