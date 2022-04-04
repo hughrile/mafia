@@ -170,7 +170,7 @@ padding: 0;
   height: 100px;
   background-color: transparent;
   border-radius: 8px;
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
   border-style: solid;
   border-width: 1px;
 }
@@ -190,13 +190,22 @@ padding: 0;
   font-size: 1.5em;
 }
 
+.iconOverlayText {
+  position: relative;
+  top: 80px;
+  width: 100%;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  font-size: 1em;
+}
+
 .indexIcon1 {
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   justify-self: center;
   align-self: center;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .indexIcon2 {
@@ -213,7 +222,7 @@ padding: 0;
   justify-self: center;
   align-self: center;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .indexIcon4 {
@@ -222,7 +231,7 @@ padding: 0;
   justify-self: center;
   align-self: center;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .divMain {

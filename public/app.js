@@ -488,7 +488,7 @@ socket.on('chatroomsInit', function(data){
         }
         chatroomBtnArray[i].style.visibility = visibility;
     }
-    console.log('chatroomsinit tes ****' + data.playerRooms);
+    console.log('chatroomsinit:' + data.playerRooms);
 });
 
 socket.on('detectiveInit', function(data){
@@ -512,16 +512,29 @@ for (i = 0; i < chatroomBtnArray.length; i++) {
 */
 
 // Chat button generator
+
+var activeChatBtn;
+var selChatBtn;
+
 for (i=0; i < chatroomBtnArray.length; i++) {
     document.getElementById("chatroomBtn"+i).addEventListener('click', (function(){
-        var index = i;
-        return function() {
-            socket.emit('chatroomsVerify', {
-                index: index
-            })
+    var index = i;
+    return function() {
+        socket.emit('chatroomsVerify', {
+            index: index
+        });
+
+        for(var x = 0; x < chatroomBtnArray.length; x++) {
+            chatroomBtnArray[x].style.color = 'black';
+            chatroomBtnArray[x].style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
         }
-    })());
+
+        chatroomBtnArray[index].style.color = 'white';
+        chatroomBtnArray[index].style.backgroundColor = "black";
+    }
+ })());
 }
+
 
 
 
@@ -529,10 +542,11 @@ for (i=0; i < chatroomBtnArray.length; i++) {
 socket.on('chatroomsVerify', function(data){
         if (data.verified == true) { // verify permission to access this button
             console.log('detected a button click as expected') // hide current chatroom, display the new chatroom 
+            //console.log('room verified: ' + data.index);
         } else {
             console.log('detected an unexpected button click') // refresh user's buttons as they should be, maybe later add a cheating log
         }
-})
+});
 
 
 /* Listen for events

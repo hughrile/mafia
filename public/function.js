@@ -249,6 +249,17 @@ var userCreate = function(socketId){
     return;
 }
 
+// Current alive players array
+
+var playersAlive = function() {
+    const playersAliveArr = [];
+        for(i = 0;i < playersArray.length;i++){
+            if(playersArray[i].playerStatus == 'alive') {
+                playersAliveArr.push(playersArray[i]);
+            }
+        }
+    return playersAliveArr;
+}
 
 
 // Index searching
@@ -267,7 +278,7 @@ var getPlayerBySocket = function(socketID) {
           if(playersArray[i].socketId == socketID){
             return i;
         }
-  }
+    }
 }
 
 var getRoomsBySocket = function(socketID) {
@@ -328,6 +339,14 @@ var isSus = function(roleName) { // roles
     }
     }
 
+}
+
+var isAlive = function(socketID) {
+    if (playersArray[getPlayerBySocket(socketID).playerStatus] == 'alive') {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 var isSpectator = function(socketID) {
@@ -404,14 +423,14 @@ function playerListUpdate() {
         if (playersArray[i].playerStatus == 'dead') {
             if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
                 if (vote === undefined || vote === null) {
-                    playerList += `<li class='playerListItem'>• ${name}</li>`;
+                    playerList += `<li class='playerListDeadItem'>• ${name}</li>`;
                 } else
-                playerList += `<li class='playerListItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
+                playerList += `<li class='playerListDeadItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
             } else { // if player is not lead don't show a lil dot
                 if (vote === undefined || vote === null) {
-                    playerList += `<li class='playerListItem'> ${name} </li>`;
+                    playerList += `<li class='playerListDeadItem'> ${name} </li>`;
                 } else
-                playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+                playerList += `<li class='playerListDeadItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
             }
         }
     }
@@ -419,7 +438,7 @@ function playerListUpdate() {
     return playerList;
 } // style="list-style-image:url('./src/iconDot.svg')"
 
-var getPlayerVote = function() { // called by the generated buttons
+var getPlayerVote = function() { // REQUIRED: called by the generated buttons
     //testing only
     vote = event.srcElement.id;
     document.getElementById("voteSelect").innerHTML = vote;
@@ -517,6 +536,7 @@ var resetPlayers = function() {
     clearArray(playersArray);
     clearArray(chatroomsArray);
     clearArray(availableRoles);
+    //clearArray..
 }
 
 
@@ -566,7 +586,7 @@ var splicifier = function(e) { // for roles init
 
 // Win conditions
 
-var numberOf = function(role) {
+var numberOfRole = function(role) { // only alive counted
     var total = 0;
     for(i = 0;i < playersArray.length;i++){
         if(playersArray[i].playerRole == role && playersArray[i].playerStatus == 'alive'){
@@ -575,8 +595,17 @@ var numberOf = function(role) {
     } return total;
 }
 
+var numberOfStatus = function(status) {
+    var total = 0;
+    for(i = 0;i < playersArray.length;i++){
+        if(playersArray[i].playerStatus == status){
+          total++;
+      }
+    } return total;
+}
+
 var civilWin = function() {
-    if (numberOf('mafia') < 1) {
+    if (numberOfRole('mafia') < 1) {
         return true;
     } else {
         return false;
@@ -584,7 +613,7 @@ var civilWin = function() {
 }
 
 var mafiaWin = function() {
-    if (numberOf('mafia') >= playersArray.length / 2) {
+    if (numberOfRole('mafia') >= numberOfStatus('alive') / 2) { // was: (numberOfRole('mafia') >= playersArray.length / 2)
         return true;
     } else {
         return false;
@@ -621,11 +650,13 @@ module.exports = {
     suspectsRevealed: suspectsRevealed,
     playersKilled: playersKilled,
 
+    playersAlive: playersAlive,
     userCreate: userCreate,
     getPlayerBySocket: getPlayerBySocket,
     getPlayerById: getPlayerById,
     getSocketArray: getSocketArray,
     isSus: isSus,
+    isAlive: isAlive,
     isSpectator: isSpectator,
     roleExists: roleExists,
     playerExists: playerExists,

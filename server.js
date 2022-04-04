@@ -282,7 +282,7 @@ io.on('connection', socket => { // connection start
         }
       }, 2000);
     }
-    console.log('after ' + playersArray);
+    // console.log('after ' + playersArray);
     console.log(`${socketArray.length} instances connected`);
   });
 
@@ -294,7 +294,7 @@ io.on('connection', socket => { // connection start
 
     if (allowPlayers === false) {
       var playerRooms = functions.chatroomsGet(socket.id); // get current room access
-      var roomTrigger = playerRooms[`${data.index}`]; // get room allowed (no verified, FORCED)
+      var roomTrigger = playerRooms[`${data.index}`]; // get room allowed (not verified, FORCED)
       var status;
       if (roomTrigger !== '') {
         status = true;
@@ -303,6 +303,7 @@ io.on('connection', socket => { // connection start
         var chatRoom = chatRooms[`${player.currentChatRoom}ChatRoom`];
 
         socket.emit('chatRoomUpdate', { chatRoom });
+        //socket.emit(`chatRoomActiveIcon`, { chatRoom });
 
 
         //io.to().emit('chatRoomUpdate', {  });
@@ -312,7 +313,8 @@ io.on('connection', socket => { // connection start
       }
 
       socket.emit('chatroomsVerify', {
-        verified: status
+        verified: status,
+        index: data.index
       })
 
     }
@@ -540,6 +542,8 @@ srv.on('timerStart', function(data){// update timers once immediately
 
 srv.on('startVote', function(data){
 
+  var playersAliveArr = functions.playersAlive();
+
   if (data.target !== 'all') { // if custom role is not in the game currently, don't send or action a vote.
     if (functions.roleExists(data.target) !== true) {
       return;
@@ -555,16 +559,16 @@ srv.on('startVote', function(data){
 
   if (data.target == 'all') { // Get players in array
     console.log('vote targetting all');
-    for (i=0; i < playersArray.length; i++) {
-    targetArray.push(functions.playersArray[i]);
+    for (i=0; i < playersAliveArr.length; i++) {
+    targetArray.push(playersAliveArr[i]);
   }
 
 
 } else  {
   console.log(`vote targetting ${data.target}`);
-  for (i=0; i < playersArray.length; i++) {
+  for (i=0; i < playersAliveArr.length; i++) {
     if (playersArray[i].playerRole == data.target) {
-    targetArray.push(functions.playersArray[i]);
+    targetArray.push(playersAliveArr[i]);
     }
   }
 }
@@ -627,12 +631,12 @@ if (data.phase.phaseName == 'revote') {
   for (i=0; i < targetArray.length; i++) { // Create button
     const buttonsArray = [];
   
-    for (x=0; x < playersArray.length; x++) { // put players into a buttons array
+    for (x=0; x < playersAliveArr.length; x++) { // put players into a buttons array
 
       for (y=0; y < revoteMode.length; y++) { 
-        if (revoteMode[y] == playersArray[x].playerId) {
+        if (revoteMode[y] == playersAliveArr[x].playerId) {
 
-          buttonsArray.push(playersArray[x]); // If player is a revote mode then push into buttons array
+          buttonsArray.push(playersAliveArr[x]); // If player is a revote mode then push into buttons array
         }
       }
     }
@@ -641,17 +645,17 @@ if (data.phase.phaseName == 'revote') {
 
 } else {
 
-  for (i=0; i < targetArray.length; i++) { // Create button
+  for (i=0; i < targetArray.length; i++) { // Create button array
   const buttonsArray = [];
 
-    for (x=0; x < playersArray.length; x++) { // put players into a buttons array
+    for (x=0; x < playersAliveArr.length; x++) { // put players into a buttons array
 
       if (data.target == 'doctor') {
-        buttonsArray.push(functions.playersArray[x]); // All players
+        buttonsArray.push(playersAliveArr[x]); // All players
       } else {
 
-        if (targetArray[i].socketId !== playersArray[x].socketId) {
-          buttonsArray.push(functions.playersArray[x]); // Except self
+        if (targetArray[i].socketId !== playersAliveArr[x].socketId) {
+          buttonsArray.push(playersAliveArr[x]); // Except self
           
         }
       }
@@ -756,9 +760,8 @@ var deaths = false;
           io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
         }
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
-      console.log(`player killed in next line: ${playersArray[i].playerName}, their status was: ${playersArray[i].playerStatus}`);
+      
       playersArray[i].playerStatus = 'dead';
-      console.log(`player is 'killed': ${playersArray[i].playerName}, their status is now: ${playersArray[i].playerStatus}`);
       //playersArray.splice(i,1); // this 'kills' the player by removing them from the playersArray BREAKPOINT
       deaths = true;
     }
