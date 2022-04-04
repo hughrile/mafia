@@ -1127,6 +1127,12 @@ display: none;
   /*background-color: rgba(64, 214, 97, 0.4);*/
   padding: 6px;
 }
+.playerListDeadItem {
+  margin: 6px;
+  /*background-color: rgba(64, 214, 97, 0.4);*/
+  padding: 6px;
+  opacity: 0.3;
+}
 
 .serverHostItem {
   list-style: circle;

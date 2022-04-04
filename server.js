@@ -62,7 +62,9 @@ app.engine('pug', require('pug').__express);
 app.get("/", function(req, res){
 	res.render("index");
 });
-
+/*app.get("/dev", function(req, res){
+	res.render("index");
+});*/
 
 process.on('uncaughtException', function (exception) {
   console.log(exception); // to see your exception details in the console
@@ -81,13 +83,11 @@ io.on('connection', socket => { // connection start
     socket.emit('header', { header: 'Welcome.' });
 
     functions.userCreate(socket.id);
-    console.log('userCreate 1 fired');
     socketArray.push(socket.id);
     
     if (serverHost === undefined || serverHost === '') { // first player becomes host
       serverHost = playersArray[functions.getPlayerBySocket(socket.id)];
       functions.updateLead(serverHost.socketId);
-      //console.log('server host applied to ' + serverHost.playerName);
       setTimeout(function(){
         if (socket.id == serverHost.socketId) {
           socket.emit('serverHost')
@@ -129,7 +129,6 @@ io.on('connection', socket => { // connection start
         serverHost = playersArray[0];
         functions.updateLead(serverHost.socketId);
         io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
-        //console.log('server host applied to ' + serverHost.playerName);
         if (checkNum == -1) { // player can become host at anytime but wont have popup if game is started
           setTimeout(function(){
             io.to(serverHost.socketId).emit('serverHost')
@@ -211,14 +210,11 @@ io.on('connection', socket => { // connection start
       
       if (player !== undefined && player !== null) {
       player.playerVotesFor = data.vote;
-      
-
-      // console.log('playerVote updated to:' + player.playerVotesFor);
     }
 
       socket.emit('exitVote') // validation
 
-    } else {console.log('vote u dummy');}
+    } else {console.log('Player did not vote');}
   });
 
   socket.on('serverHost', function(){
@@ -266,10 +262,8 @@ io.on('connection', socket => { // connection start
 
 
   socket.on('joinGame', function() { // on clicking the "join" menu button, either reconnect the game or join a new one
-    console.log('before ' + playersArray);
     if (functions.playerExists(socket.id) !== true && allowPlayers == true) { // new player allowed to join
       functions.userCreate(socket.id);
-      console.log('userCreate 2 fired');
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
 
     } else if (functions.playerExists(socket.id) !== true && allowPlayers == false) { // new player as spectator
@@ -280,7 +274,6 @@ io.on('connection', socket => { // connection start
 
     if (serverHost === undefined || serverHost === '') { // first player becomes host
       serverHost = playersArray[functions.getPlayerBySocket(socket.id)]
-      //console.log('server host applied to ' + serverHost.playerName);
       functions.updateLead(serverHost.socketId);
       io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
       setTimeout(function(){
@@ -340,8 +333,6 @@ io.on('connection', socket => { // connection start
 
     if (socketExists() == true) {
       // Update player name
-      //console.log(`Allready Exists`);
-      //functions.userCreate(socket.id, data.user)
 
       var player = playersArray[functions.getPlayerBySocket(socket.id)];
       console.log(`${player.playerName} username -> ${data.user}`);
@@ -446,13 +437,6 @@ srv.on('roleInit', function() {
 
   functions.fillCivilians();
   functions.initRoleAssign();
-
-/*
-  for (i = 0; i < playersArray.length; i++) {
-    var player = playersArray[i];
-    console.log(player);
-    }
-*/
 
   for (i = 0; i < playersArray.length; i++) { // each socket array, get the player ID then put that into the playersArray
     var player = playersArray[i];
@@ -772,7 +756,10 @@ var deaths = false;
           io.to(playersArray[y].socketId).emit('actionUpdate', { actionArr });
         }
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
-      playersArray.splice(i,1);
+      console.log(`player killed in next line: ${playersArray[i].playerName}, their status was: ${playersArray[i].playerStatus}`);
+      playersArray[i].playerStatus = 'dead';
+      console.log(`player is 'killed': ${playersArray[i].playerName}, their status is now: ${playersArray[i].playerStatus}`);
+      //playersArray.splice(i,1); // this 'kills' the player by removing them from the playersArray BREAKPOINT
       deaths = true;
     }
 
@@ -976,17 +963,13 @@ srv.on('resetGame', function(){
       timeLeft: 0,
       phaseTitle: 'Awaiting host...'
     });
-    console.log('tock');
   }, 1000);
 
 
-
-  console.log('beepbppo')
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
   // io.sockets.emit('chatroomsInit', {playerRooms: ["general","",""]}); (might not be needed, if issue still persists put it back)
   io.sockets.emit('detectiveClear');
-  console.log('done');
 });
 
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));

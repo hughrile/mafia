@@ -1,4 +1,5 @@
 //init variables
+var playerStatus = 'alive'
 var playerRole = '';
 var playerTeam = '';
 var playerId = 0;
@@ -7,12 +8,6 @@ this.playerVotes = 0;
 
 var playerVotesFor = this.playerVotesFor;
 this.playerVotesFor = '';
-
-/*
-playerRole = '';
-playerTeam = '';
-playerStatus = "Alive";
-*/
 
 // ARRAYS
 const playersArray = [];
@@ -27,9 +22,10 @@ const chatroomsArray = []; // stores chatrooms that a user has access to
 // CLASSES
 
 const Player = class {
-    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom, playerLead){
+    constructor(playerId, socketId, playerStatus, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom, playerLead){
         this.playerId = playerId;
         this.socketId = socketId;
+        this.playerStatus = playerStatus;
         this.playerName = playerName;
         this.playerRole = playerRole;
         this.playerTeam = playerTeam;
@@ -245,12 +241,12 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general', false);
+    var x = new Player(playerId, socketId, playerStatus, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general', false);
     playersArray.push(x);
-    console.log(`Player ${playerId} connected (${socketId})`); // debug only
-    output = `Player ${playerId} connected (${socketId})`;
+    console.log(`Player ${playerId} connected (${socketId}), status:${playerStatus}`); // debug only
+    //output = `Player ${playerId} connected (${socketId})`;
     playerId++;
-    return output;
+    return;
 }
 
 
@@ -385,22 +381,41 @@ var updateLead = function(socket) { // remove lead from existing players and upd
 
 function playerListUpdate() {
     var playerList = '';
-    for (i = 0; i < playersArray.length; i++) {
+    for (i = 0; i < playersArray.length; i++) { // Alive players, first pass
         var name = playersArray[i].playerName;
         var vote = playersArray[i].playerVotes;
-
-        if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
-            if (vote === undefined || vote === null) {
-                playerList += `<li style="color:gold" class='playerListItem'>${name}</li>`;
-            } else
-            playerList += `<li style="color:gold" class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
-        } else { // if player is not lead don't show a lil dot
-            if (vote === undefined || vote === null) {
-                playerList += `<li class='playerListItem'> ${name} </li>`;
-            } else
-            playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+        if (playersArray[i].playerStatus == 'alive') {
+            if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'>• ${name}</li>`;
+                } else
+                playerList += `<li class='playerListItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
+            } else { // if player is not lead don't show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'> ${name} </li>`;
+                } else
+                playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+            }
         }
     }
+    for (i = 0; i < playersArray.length; i++) { // Dead players second pass
+        var name = playersArray[i].playerName;
+        var vote = playersArray[i].playerVotes;
+        if (playersArray[i].playerStatus == 'dead') {
+            if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'>• ${name}</li>`;
+                } else
+                playerList += `<li class='playerListItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
+            } else { // if player is not lead don't show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'> ${name} </li>`;
+                } else
+                playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+            }
+        }
+    }
+
     return playerList;
 } // style="list-style-image:url('./src/iconDot.svg')"
 
@@ -554,7 +569,7 @@ var splicifier = function(e) { // for roles init
 var numberOf = function(role) {
     var total = 0;
     for(i = 0;i < playersArray.length;i++){
-        if(playersArray[i].playerRole == role){
+        if(playersArray[i].playerRole == role && playersArray[i].playerStatus == 'alive'){
           total++;
       }
     } return total;
