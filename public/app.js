@@ -26,7 +26,7 @@ var usernameBtn = document.getElementById('usernameBtn'); // to show the usernam
 //var usernameIcon = document.getElementById('usernameIcon'); //
 
 
-var showVote = document.getElementById('showVoteGUI');
+// var showVote = document.getElementById('showVoteGUI');
 // Header DOM (delete double instance later)
 var mainHeader = document.getElementById('mainHeader');
 var header = document.getElementById('mainHeader');
@@ -59,9 +59,10 @@ const chatroomBtnArray = [chatroomBtn0, chatroomBtn1, chatroomBtn2];
 
 // Voting Buttons DOM
 var groupVoteGUI = document.getElementById('groupVoteGUI'); 
-var groupVoteButtons = document.querySelector(".groupVoteButtons");
+var groupVoteButtons = document.getElementById('groupVoteButtons');
 var voteSelect = document.getElementById('voteSelect');
 var exitVote = document.getElementById('exitVote');
+const voteBtnArray = [];
 
 // Event Notification
 var gameEventGUI = document.getElementById('gameEventGUI');
@@ -506,9 +507,6 @@ socket.on('detectiveClear', function(data){
 
 // Chat button generator / chatroombutton clicked
 
-var activeChatBtn;
-var selChatBtn;
-
 for (i=0; i < chatroomBtnArray.length; i++) {
     document.getElementById("chatroomBtn"+i).addEventListener('click', (function(){
     var index = i;
@@ -603,18 +601,53 @@ socket.on('timerUpdate', function (data) {
 socket.on('hideById', function(data){ //
     document.getElementById(`${data.ID}`).style.visibility= 'hidden' ;
 });
-
-
-
-/*showVote.addEventListener('click', function(){ //
-    socket.emit('showVote', { 
-    });
-}); */
-
+/*
 socket.on('showVote', function(data){ // show card
     groupVoteButtons.innerHTML = data.buttonParse;
     voteSelect.innerHTML = '';
     groupVoteGUI.style.visibility= 'visible';
+});*/
+
+
+socket.on('showVote', function(data){
+
+    var buttonsArray = data.buttonParse;
+
+    // button array creator
+
+    for (i=0; i < buttonsArray.length; i++) { // push parsed buttons into an array
+
+        // CREATE THE BUTTON
+
+        var x = document.createElement("BUTTON"); // create button html element
+        x.classList.add("playerButton"); // add playerButton class (styling)
+        x.setAttribute("id", "voteBtn"+i); // set the button's ID
+        var t = document.createTextNode(`${buttonsArray[i].playerName}`); // specify name of the button
+        x.appendChild(t); // append name to button
+        document.getElementById("groupVoteButtons").appendChild(x); // append button to parent element
+
+        window['voteBtnVar'+i] = document.getElementById('voteBtn'+ i); // create dynamic variable for HTMLButtonElement
+        voteBtnArray.push(window['voteBtnVar'+i]);
+
+        document.getElementById('voteBtn'+i).addEventListener('click', (function(){ // provdie dynamic button functionality
+            var index = i;
+            return function() {
+    
+                for (y=0; y < voteBtnArray.length; y++) {
+
+                    voteBtnArray[y].style.color = 'black';
+                    voteBtnArray[y].style.backgroundColor = "white";    
+
+                }
+
+                voteBtnArray[index].style.color = 'white';
+                voteBtnArray[index].style.backgroundColor = "black";    
+                
+            }
+         })());
+
+         groupVoteGUI.style.visibility = 'visible';
+    }
 });
 
 

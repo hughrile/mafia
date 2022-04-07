@@ -195,17 +195,6 @@ io.on('connection', socket => { // connection start
 */
   });
 
-
-
-  // Button passthrough
-/*
-  socket.on('showVote', function(){
-    playerButtons = functions.groupVoteList(); // get buttons
-      for (i = 0; i < playersArray.length; i++) { // emit buttons to all players
-        io.to(playersArray[i].socketId).emit('showVote', { buttonParse: playerButtons });
-      }
-  });
-*/
   socket.on('exitVote', function(data){
     if (data.vote !== '') {// validation
 
@@ -219,6 +208,14 @@ io.on('connection', socket => { // connection start
 
     } else {console.log('Player did not vote');}
   });
+
+
+
+
+
+
+
+
 
   socket.on('serverHost', function(){
     
@@ -549,6 +546,8 @@ srv.on('startVote', function(data){
 
   if (data.target !== 'all') { // if custom role is not in the game currently, don't send or action a vote.
     if (functions.roleExists(data.target) !== true) {
+
+      console.log('potential breakpoint 1');
       return;
     }
   }
@@ -572,6 +571,7 @@ srv.on('startVote', function(data){
   for (i=0; i < playersAliveArr.length; i++) {
     if (playersArray[i].playerRole == data.target) {
     targetArray.push(playersAliveArr[i]);
+    console.log(`vote targetted ${playersAliveArr[i].playerName}`);
     }
   }
 }
@@ -617,8 +617,8 @@ var actionTrigger = function(voteVar, playerSelf) {
     }
   } 
 }
-
-var getButtonsFromArray = function(buttonsArray) {
+/*
+var getButtonsFromArray = function(buttonsArray) { // convert buttons array into HTML
   var playerButtons = '';
   for (y = 0; y < buttonsArray.length; y++) {
       var name = buttonsArray[y].playerName;
@@ -626,7 +626,7 @@ var getButtonsFromArray = function(buttonsArray) {
       playerButtons += `<button class='playerButton' id = '${ID}' onclick='getPlayerVote()'> ${name} </button>`;
   }    
   return playerButtons;
-}
+}*/
 
 
 if (data.phase.phaseName == 'revote') {
@@ -643,7 +643,8 @@ if (data.phase.phaseName == 'revote') {
         }
       }
     }
-    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
+    // io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
+    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: buttonsArray }); // Push buttons to player
   }
 
 } else {
@@ -663,7 +664,8 @@ if (data.phase.phaseName == 'revote') {
         }
       }
     }
-    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
+    // io.to(targetArray[i].socketId).emit('showVote', { buttonParse: getButtonsFromArray(buttonsArray) }); // Push buttons to player
+    io.to(targetArray[i].socketId).emit('showVote', { buttonParse: buttonsArray }); // Push buttons to player
   }
 }
 
@@ -747,7 +749,7 @@ var deaths = false;
 
   for (i = 0; i < playersArray.length; i++) {
 
-    console.log(i);
+    //console.log(i);
     
     if (playersArray[i].killTarget == true && playersArray[i].protectTarget == false) {
 
@@ -800,8 +802,7 @@ var deaths = false;
       deaths = true;
     }
 
-    console.log(i);
-    //console.log(playersArray[i].playerName + 'cleared');
+    console.log(playersArray[i].playerName + 'cleared');
     playersArray[i].killTarget = false;
     playersArray[i].protectTarget = false;
   }
