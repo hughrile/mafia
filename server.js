@@ -32,12 +32,13 @@ var roomno = 1; // room variable
 var socketArray = []; // global sockets array
 var actionArr = [];
 
-//chatRoom
+//chatRoom arrays and chatRooms object container
 var generalChatRoom = [];
+var spectatorChatRoom = [];
 var mafiaChatRoom = [];
 var doctorChatRoom = [];
 var infectedChatRoom = [];
-var chatRooms = { generalChatRoom:generalChatRoom, mafiaChatRoom:mafiaChatRoom, doctorChatRoom:doctorChatRoom, infectedChatRoom:infectedChatRoom };
+var chatRooms = { generalChatRoom:generalChatRoom, spectatorChatRoom:spectatorChatRoom, mafiaChatRoom:mafiaChatRoom, doctorChatRoom:doctorChatRoom, infectedChatRoom:infectedChatRoom };
 // `${roomName}chatRoom`
 
 var allowPlayers = true;
@@ -173,7 +174,9 @@ io.on('connection', socket => { // connection start
     var roomName = playersArray[functions.getPlayerBySocket(socket.id)].currentChatRoom;
     var chatRoom = chatRooms[`${roomName}ChatRoom`];
 
-    chatRoom.push(`<p> ${playerName}: ${message}</p>`);
+    if (chatRoom !== undefined && chatRoom !== null) {
+      chatRoom.push(`<p> ${playerName}: ${message}</p>`);
+    }
 
     for (i=0; i < playersArray.length; i++) {
       if (playersArray[i].currentChatRoom == roomName) {
@@ -292,13 +295,13 @@ io.on('connection', socket => { // connection start
     //console.log(data.index);
 
 
-    if (allowPlayers === false) {
+    if (allowPlayers === false) { // chats only functional during game
       var playerRooms = functions.chatroomsGet(socket.id); // get current room access
       var roomTrigger = playerRooms[`${data.index}`]; // get room allowed (not verified, FORCED)
       var status;
       if (roomTrigger !== '') {
         status = true;
-        var player = playersArray[functions.getPlayerBySocket(socket.id)]
+        var player = playersArray[functions.getPlayerBySocket(socket.id)];
         player.currentChatRoom = roomTrigger;
         var chatRoom = chatRooms[`${player.currentChatRoom}ChatRoom`];
 
@@ -500,7 +503,7 @@ srv.on('timerStart', function(data){// update timers once immediately
       timeLeft: time,
       phaseTitle: phase.phaseTitle
     });
-    console.log('tick');
+    //console.log('tick');
   }, 1000);
 });
 
@@ -743,6 +746,8 @@ srv.on('actionVote', function(){ // currently a kill player event
 var deaths = false;
 
   for (i = 0; i < playersArray.length; i++) {
+
+    console.log(i);
     
     if (playersArray[i].killTarget == true && playersArray[i].protectTarget == false) {
 
@@ -762,17 +767,46 @@ var deaths = false;
       io.to(playersArray[i].socketId).emit('showEvent', { title: 'You Died', text: `Sorry <b>${playersArray[i].playerName}</b> you've died, you can continue spectating though c:`, kill: true });
       
       playersArray[i].playerStatus = 'dead';
-      //playersArray.splice(i,1); // this 'kills' the player by removing them from the playersArray BREAKPOINT
+
+        console.log('player has been killed via an actionVote');
+        console.log(`player killed previously had access to: ${functions.chatroomsGet(playersArray[i].socketId)}`);
+
+
+        // chatroomEdit
+
+        var playerRooms = functions.getRoomsBySocket(playersArray[i].socketId); // get current chatrooms object
+
+        playerRooms.roomMain = 'spectator'; // manually specify new room access permission
+        playerRooms.roomRole = ''; // manually specify new room access permission
+        playerRooms.roomPlus = ''; // manually specify new room access permission
+        
+        console.log(`player killed now has access to: ${functions.chatroomsGet(playersArray[i].socketId)}`);
+
+        playersArray[i].currentChatRoom = 'spectator'; // set current active room to spectator chat
+        var chatRoom = chatRooms[`${playersArray[i].currentChatRoom}ChatRoom`]; // set spectatorChatRoom array as chatRoom variable
+        
+        io.to(playersArray[i].socketId).emit('chatRoomUpdate', { chatRoom }); // push spectator chat to client
+
+        var playerRooms2 = functions.chatroomsGet(playersArray[i].socketId); // update UI html header (from 'srv.emit-chatroomsInit')
+          io.to(playersArray[i].socketId).emit('chatroomsInit', {
+            playerRooms: playerRooms2
+          });
+
+          //io.to(playersArray[i].socketId).emit('chatroomBtn0Highlight');
+        
+
+
+      //playersArray.splice(i,1); // this 'kills' the player by removing them from the playersArray MAJOR BREAKPOINT (roles3.0 prep)
       deaths = true;
     }
 
-    if (playersArray[i] !== null && playersArray[i] !== undefined) { // clears all votes to kill / protect
-      // console.log(playersArray[i].playerName + 'cleared');
-      playersArray[i].killTarget = false;
-      playersArray[i].protectTarget = false;
-
-    }
+    console.log(i);
+    //console.log(playersArray[i].playerName + 'cleared');
+    playersArray[i].killTarget = false;
+    playersArray[i].protectTarget = false;
   }
+
+
 
   if (deaths == false) {
     console.log('no players were killed');
@@ -942,6 +976,7 @@ srv.on('resetGame', function(){
 
   
   chatRooms[`generalChatRoom`] = [];
+  chatRooms[`spectatorChatRoom`] = [];
   chatRooms[`mafiaChatRoom`] = [];
   chatRooms[`doctorChatRoom`] = [];
   chatRooms[`infectedChatRoom`] = [];
@@ -971,7 +1006,6 @@ srv.on('resetGame', function(){
 
   io.sockets.emit('exitGameSetup'); // close setup console
   io.sockets.emit('gameEndUI');
-  // io.sockets.emit('chatroomsInit', {playerRooms: ["general","",""]}); (might not be needed, if issue still persists put it back)
   io.sockets.emit('detectiveClear');
 });
 

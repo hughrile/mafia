@@ -478,6 +478,8 @@ socket.on('getVote', function(){ // on server request, send the votes
 // display buttons
 
 socket.on('chatroomsInit', function(data){
+    console.log('firedclientside chatroomsInit');
+
     var visibility;
     for (i = 0; i < data.playerRooms.length; i++) {
         if (data.playerRooms[i] === '') {
@@ -488,7 +490,10 @@ socket.on('chatroomsInit', function(data){
         }
         chatroomBtnArray[i].style.visibility = visibility;
     }
-    console.log('chatroomsinit:' + data.playerRooms);
+    //console.log('chatroomsinit:' + data.playerRooms);
+
+    chatroomBtn0.style.color = 'white';
+    chatroomBtn0.style.backgroundColor = "black";    
 });
 
 socket.on('detectiveInit', function(data){
@@ -499,19 +504,7 @@ socket.on('detectiveClear', function(data){
     icon2.style.display = 'none';
 });
 
-/*
-// on button clicks
-for (i = 0; i < chatroomBtnArray.length; i++) {
-    chatroomBtnArray[i].addEventListener('click', function(){
-        key = chatroomBtnArray[i].innerHTML;
-        socket.emit('chatroomsVerify', {
-            key: key
-        })
-    });
-}
-*/
-
-// Chat button generator
+// Chat button generator / chatroombutton clicked
 
 var activeChatBtn;
 var selChatBtn;
@@ -534,6 +527,12 @@ for (i=0; i < chatroomBtnArray.length; i++) {
     }
  })());
 }
+/*
+socket.on('chatroomBtn0Highlight', function(data){
+    chatroomBtn0.style.color = 'white';
+    chatroomBtn0.style.backgroundColor = "black";
+});
+*/
 
 
 

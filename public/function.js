@@ -229,7 +229,7 @@ rolesArray.push(
     Infectleader
 );
 
-const Room = class { // class for storing phase information
+const Chatroom = class { // class for storing chat information
     constructor(socketId, roomMain, roomRole, roomPlus){
         // Info
         this.socketId = socketId; //                Socket Id
@@ -510,7 +510,7 @@ var initRoleAssign = function() {
 
         // create room here
 
-        var y = new Room(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available
+        var y = new Chatroom(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available
         chatroomsArray.push(y);
 
         //console.log(chatroomsArray[i]);
@@ -538,42 +538,6 @@ var resetPlayers = function() {
     clearArray(availableRoles);
     //clearArray..
 }
-
-
-
-
-/*
-var chatroomsGet = function(socketID) { // output rooms object as an array
-    r = getRoomsBySocket(socketID);
-    if (getRoomsBySocketExists(socketID) == true) {
-        rooms = [r.roomMain, r.roomRole, r.roomPlus]
-        return rooms;
-    } else {
-        return;
-    }
-}
-*/
-
-// ahhhhhhhhhhhhh console.log(getTeamByRole('civilian'));
-
-/*
-var initTeamAssign = function() {
-    for (l = playersArray.length -1; l>= 0; --l){
-        var team = getTeamByRole(playersArray[l].playerRole);
-        console.log(team);
-
-        //playersArray[l].playerTeam = team;
-
-
-
-        //playersArray[i].playerTeam = getRoleByName(playersArray[i].playerRole);
-
-        //console.log('Team - ' + team);
-        //console.log('ID:'+playersArray[i].playerId +", "+playersArray[i].playerName+", Role: "+playersArray[i].playerRole);
-        //console.log(playersArray[i].playerId + playersArray[i].playerTeam);
-    }
-    //console.log(playersArray);
-}*/
 
 var splicifier = function(e) { // for roles init
     for (l = availableRoles.length; l>= 0; --l) {
@@ -667,6 +631,7 @@ module.exports = {
     playerListUpdate: playerListUpdate,
     initRoleAssign: initRoleAssign,
     chatroomsGet: chatroomsGet,
+    getRoomsBySocket: getRoomsBySocket,
     getRoomsBySocketExists: getRoomsBySocketExists,
     //initTeamAssign, initTeamAssign,
 
