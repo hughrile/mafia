@@ -183,39 +183,50 @@ io.on('connection', socket => { // connection start
         io.to(playersArray[i].socketId).emit('chatRoomUpdate', { chatRoom });
       }
     }
-
-    // send to all currently in chatroom
-
-    //socket.broadcast.emit('messageAlert');
-/*
-    io.sockets.emit('chat', {
-      message: message,
-      playerName: playerName
-    });
-*/
   });
 
-  socket.on('exitVote', function(data){
-    if (data.vote !== '') {// validation
 
-      player = playersArray[functions.getPlayerBySocket(socket.id)];
-      
-      if (player !== undefined && player !== null) {
-      player.playerVotesFor = data.vote;
+
+
+
+  socket.on('voteUpdate', function(data){
+    var index = data.index;
+    var btnsArray = data.btnsArray;
+    var playerSelected = playersArray[functions.getPlayerBySocket(btnsArray[index].socketId)]; // get player voted for
+    var player = playersArray[functions.getPlayerBySocket(socket.id)];
+
+    console.log(`${player.playerName} clicked button of ${playerSelected.playerName}`);
+
+    /*
+    if (player.playerVotesFor !== '' && playerSelected.playerVotes !== null && playerSelected.playerVotes !== undefined) { // if this is an additional vote selection
+      var previousSelected = playersArray[functions.getPlayerBySocket(player.playerVotesFor.socketId)];
+      previousSelected.playerVotes--; // decrement a vote from previous clicked
+      playerSelected.playerVotes++; // increment selected players votes
+      player.playerVotesFor = playerSelected.playerId;
+    } else {
+      playerSelected.playerVotes++; // increment selected players votes
+      player.playerVotesFor = playerSelected.playerId;
     }
+*/player.playerVotesFor = playerSelected.playerId;
 
-      socket.emit('exitVote') // validation
-
-    } else {console.log('Player did not vote');}
+    console.log(`${player.playerName} votes for: ${player.playerVotesFor}`);
+    io.sockets.emit('playerList', { playerListParse: functions.playerListUpdate() });
   });
+  
 
 
 
 
 
+  socket.on('exitVote', function(){
+    var player = playersArray[functions.getPlayerBySocket(socket.id)];
 
-
-
+    if (player.playerVotesFor !== '') {// validation
+      socket.emit('exitVote')
+    } else {
+      console.log('Player did not vote');
+    }
+  });
 
   socket.on('serverHost', function(){
     
@@ -540,14 +551,12 @@ srv.on('timerStart', function(data){// update timers once immediately
 
 
 
-srv.on('startVote', function(data){
+srv.on(`startVote`, function(data){
 
   var playersAliveArr = functions.playersAlive();
 
   if (data.target !== 'all') { // if custom role is not in the game currently, don't send or action a vote.
     if (functions.roleExists(data.target) !== true) {
-
-      console.log('potential breakpoint 1');
       return;
     }
   }
@@ -569,21 +578,25 @@ srv.on('startVote', function(data){
 } else  {
   console.log(`vote targetting ${data.target}`);
   for (i=0; i < playersAliveArr.length; i++) {
-    if (playersArray[i].playerRole == data.target) {
+    if (playersAliveArr[i].playerRole == data.target) {
     targetArray.push(playersAliveArr[i]);
-    console.log(`vote targetted ${playersAliveArr[i].playerName}`);
+    console.log(`${data.target} vote targetted ${playersAliveArr[i].playerName}`);
     }
   }
 }
 
 
 
-var actionTrigger = function(voteVar, playerSelf) {
+var actionTrigger = function(playerVoted, playerSelf) {
   
-  var player = playersArray[functions.getPlayerById(voteVar)];
+  var player = playersArray[functions.getPlayerById(playerVoted)];
+
+  // not working here
+  console.log(`debugger ${player}`)
+  console.log(`debugger2 ${player.playerName}`)
 
   if (player !== undefined && player !== null) {
-
+  
   if (data.action == 'kill') { player.killTarget = true; console.log(player.playerName + ' targeted for death'); }
 
   if (data.action == 'protect') { player.protectTarget = true; console.log(player.playerName + ' targeted for protection'); }
@@ -608,7 +621,7 @@ var actionTrigger = function(voteVar, playerSelf) {
 
     console.log(player.playerName + ' targeted as suspect');
     console.log(functions.isSus(player.playerRole));
-    console.log(playerSelf.socketId + ' id');
+    //console.log(playerSelf.socketId + ' id');
     io.to(playerSelf.socketId).emit('showEvent', {
       title: 'A closer look...',
       text: `You suspected ${player.playerName},<br>${sus}`,
@@ -682,14 +695,24 @@ if (data.phase.phaseName == 'revote') {
     if (data.type == 'group') { // group vote system. shared votes array with a votemode variable to decide logic
 
       for (i = 0; i < targetArray.length; i++) {
+        console.log(i);
         var playerVote = targetArray[i].playerVotesFor;
+        var player = functions.getPlayerBySocket(targetArray[i].socketId);
+       
+
+        if (targetArray[i] !== '' && targetArray[i] !== undefined && targetArray[i] !== null) {
+          console.log(`${i} tester2 ${functions.getPlayerBySocket(targetArray[i].socketId)}`); // ID of player voting
+          console.log(`${i} tester3 ${playersArray[functions.getPlayerById(playerVote)].playerName}`);
+        }
+
         if (playerVote !== '' && playerVote !== undefined) {
           votesArray.push(playerVote);
-          targetArray[i].playerVotesFor = '';
-        }
+          console.log(`${i} debugger3 ${playerVote}`);
+        } playerVote = '';
       }
 
       var voteMode = functions.getMode(votesArray, '');
+      console.log(`${i} debugger4 ${voteMode}`);
 
 
       if (voteMode.length > 1 && data.phase.phaseName == 'revote') { // multimodal revote logic
@@ -697,7 +720,7 @@ if (data.phase.phaseName == 'revote') {
         if (data.target == 'all') {
           console.log('revote targetting all');
           // skip the vote
-          console.log('skipped the vote group revote');
+          //console.log('skipped the vote group revote');
           return;
         } else {
           console.log(`vote targetting ${data.target}`);
@@ -712,9 +735,11 @@ if (data.phase.phaseName == 'revote') {
         srv.emit(`phaseStart`,  { phase: functions.phaseArray[4], rVvals: [data.target, data.action, data.type], modes: voteMode }); // Start a revote (also parse through values in an array)
         return;
 
-      } else { // turn this into a function to call at the end of multimodal revote logic
+      } else { // can turn this into a function to call at the end of multimodal revote logic
         if (voteMode.length == 1){
           actionTrigger(voteMode, targetArray[i]);
+          console.log(`debugger5 ${voteMode} - ${player}`);
+          return;
         } else {
           console.log('triggered action filter');
         }
@@ -728,11 +753,16 @@ if (data.phase.phaseName == 'revote') {
       for (i=0; i < targetArray.length; i++) { // get player's vote
         var voteSelection;
         var playerVote = targetArray[i].playerVotesFor;
+
+        console.log(`${targetArray[i].playerName} votes for ${playerVote}`); // debug
+
         if (playerVote !== '' && playerVote !== undefined) {
           voteSelection = playerVote;
-          targetArray[i].playerVotesFor = '';
+          console.log(`sldkjhfblkasjdbfkljasdhfkjas`);
         }
         actionTrigger(voteSelection, targetArray[i]); // action player's choice
+        playerVote = '';
+        return;
       }
 
     }
@@ -770,8 +800,8 @@ var deaths = false;
       
       playersArray[i].playerStatus = 'dead';
 
-        console.log('player has been killed via an actionVote');
-        console.log(`player killed previously had access to: ${functions.chatroomsGet(playersArray[i].socketId)}`);
+        //console.log('player has been killed via an actionVote');
+        //console.log(`player killed previously had access to: ${functions.chatroomsGet(playersArray[i].socketId)}`);
 
 
         // chatroomEdit
@@ -801,10 +831,10 @@ var deaths = false;
       //playersArray.splice(i,1); // this 'kills' the player by removing them from the playersArray MAJOR BREAKPOINT (roles3.0 prep)
       deaths = true;
     }
-
-    console.log(playersArray[i].playerName + 'cleared');
     playersArray[i].killTarget = false;
     playersArray[i].protectTarget = false;
+    //playersArray[i].playerVotesFor = '';
+    console.log(playersArray[i].playerName + 'cleared');
   }
 
 
@@ -863,6 +893,7 @@ srv.on('phaseEnd', function(data){ // on phase end wait x time then start next p
 
       // Hide voting window every round
       for (i = 0; i < playersArray.length; i++) { // close voting for all players
+        playersArray[i].playerVotes = 0;
         io.to(playersArray[i].socketId).emit('exitVote');
         // io.to(playersArray[i].socketId).emit('exitEvent'); //closes bread message instantly :(
       }

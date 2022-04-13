@@ -3,11 +3,8 @@ var playerStatus = 'alive'
 var playerRole = '';
 var playerTeam = '';
 var playerId = 0;
-var playerVotes = this.playerVotes;
-this.playerVotes = 0;
-
-var playerVotesFor = this.playerVotesFor;
-this.playerVotesFor = '';
+var playerVotes = 0;
+var playerVotesFor = '';
 
 // ARRAYS
 const playersArray = [];
@@ -358,8 +355,9 @@ var isSpectator = function(socketID) {
 }
 
 var roleExists = function(role) {
-    for(i = 0;i < playersArray.length;i++){
-        if(playersArray[i].playerRole == role){
+    var playersAliveArr = playersAlive();
+    for(i = 0;i < playersAliveArr.length;i++){
+        if(playersAliveArr[i].playerRole == role){
           return true;
       }
   }
@@ -438,12 +436,13 @@ function playerListUpdate() {
     return playerList;
 } // style="list-style-image:url('./src/iconDot.svg')"
 
+/*
 var getPlayerVote = function() { // REQUIRED: called by the generated buttons
     //testing only
     vote = event.srcElement.id;
     document.getElementById("voteSelect").innerHTML = vote;
 }
-
+*/
 
 // fischer shuffle (true random shuffle)
 const shuffleArray = array => {

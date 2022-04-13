@@ -629,20 +629,22 @@ socket.on('showVote', function(data){
         window['voteBtnVar'+i] = document.getElementById('voteBtn'+ i); // create dynamic variable for HTMLButtonElement
         voteBtnArray.push(window['voteBtnVar'+i]);
 
-        document.getElementById('voteBtn'+i).addEventListener('click', (function(){ // provdie dynamic button functionality
+        document.getElementById('voteBtn'+i).addEventListener('click', (function(){ // provide dynamic button functionality
             var index = i;
+            var btnsArray = buttonsArray;
             return function() {
-    
-                for (y=0; y < voteBtnArray.length; y++) {
 
+                socket.emit('voteUpdate', {
+                    index: index,
+                    btnsArray: btnsArray
+                });                
+
+                for (y=0; y < voteBtnArray.length; y++) {
                     voteBtnArray[y].style.color = 'black';
                     voteBtnArray[y].style.backgroundColor = "white";    
-
                 }
-
                 voteBtnArray[index].style.color = 'white';
                 voteBtnArray[index].style.backgroundColor = "black";    
-                
             }
          })());
 
@@ -652,13 +654,15 @@ socket.on('showVote', function(data){
 
 
 exitVote.addEventListener('click', function(){
-    socket.emit('exitVote', { // for verification ONLY
-        vote: voteSelect.innerHTML
-    });
+    socket.emit('exitVote'); // verify whether player has voted, if true exit as expected
 });
 
 socket.on('exitVote', function(){ // hide and reset vote window
-    groupVoteGUI.style.visibility= 'hidden';
+
+    for (y=0; y < voteBtnArray.length; y++) { // remove voting buttons
+        voteBtnArray[y].remove();
+    }
+    groupVoteGUI.style.visibility= 'hidden'; // hide GUI
 });
 
 
