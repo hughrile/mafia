@@ -646,12 +646,11 @@ if (data.phase.phaseName == 'revote') {
 
   for (i=0; i < targetArray.length; i++) { // Create button
     const buttonsArray = [];
-  
+    
     for (x=0; x < playersAliveArr.length; x++) { // put players into a buttons array
-
       for (y=0; y < revoteMode.length; y++) { 
         if (revoteMode[y] == playersAliveArr[x].playerId) {
-
+          
           buttonsArray.push(playersAliveArr[x]); // If player is a revote mode then push into buttons array
         }
       }
@@ -695,20 +694,22 @@ if (data.phase.phaseName == 'revote') {
     if (data.type == 'group') { // group vote system. shared votes array with a votemode variable to decide logic
 
       for (i = 0; i < targetArray.length; i++) {
-        console.log(i);
+        console.log(i+' of ' + targetArray.length);
         var playerVote = targetArray[i].playerVotesFor;
-        var player = functions.getPlayerBySocket(targetArray[i].socketId);
+        //var player = functions.getPlayerBySocket(targetArray[i].socketId);
        
 
         if (targetArray[i] !== '' && targetArray[i] !== undefined && targetArray[i] !== null) {
           console.log(`${i} tester2 ${functions.getPlayerBySocket(targetArray[i].socketId)}`); // ID of player voting
-          console.log(`${i} tester3 ${playersArray[functions.getPlayerById(playerVote)].playerName}`);
+          console.log(`${targetArray[i]}`);
         }
+
+        console.log(`debugger3000`);
 
         if (playerVote !== '' && playerVote !== undefined) {
           votesArray.push(playerVote);
           console.log(`${i} debugger3 ${playerVote}`);
-        } playerVote = '';
+        }
       }
 
       var voteMode = functions.getMode(votesArray, '');
@@ -738,7 +739,6 @@ if (data.phase.phaseName == 'revote') {
       } else { // can turn this into a function to call at the end of multimodal revote logic
         if (voteMode.length == 1){
           actionTrigger(voteMode, targetArray[i]);
-          console.log(`debugger5 ${voteMode} - ${player}`);
           return;
         } else {
           console.log('triggered action filter');
@@ -761,7 +761,6 @@ if (data.phase.phaseName == 'revote') {
           console.log(`sldkjhfblkasjdbfkljasdhfkjas`);
         }
         actionTrigger(voteSelection, targetArray[i]); // action player's choice
-        playerVote = '';
         return;
       }
 
@@ -833,7 +832,7 @@ var deaths = false;
     }
     playersArray[i].killTarget = false;
     playersArray[i].protectTarget = false;
-    //playersArray[i].playerVotesFor = '';
+    playersArray[i].playerVotesFor = '';
     console.log(playersArray[i].playerName + 'cleared');
   }
 
