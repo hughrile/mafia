@@ -26,7 +26,7 @@ var usernameBtn = document.getElementById('usernameBtn'); // to show the usernam
 //var usernameIcon = document.getElementById('usernameIcon'); //
 
 
-var showVote = document.getElementById('showVoteGUI');
+// var showVote = document.getElementById('showVoteGUI');
 // Header DOM (delete double instance later)
 var mainHeader = document.getElementById('mainHeader');
 var header = document.getElementById('mainHeader');
@@ -59,9 +59,10 @@ const chatroomBtnArray = [chatroomBtn0, chatroomBtn1, chatroomBtn2];
 
 // Voting Buttons DOM
 var groupVoteGUI = document.getElementById('groupVoteGUI'); 
-var groupVoteButtons = document.querySelector(".groupVoteButtons");
+var groupVoteButtons = document.getElementById('groupVoteButtons');
 var voteSelect = document.getElementById('voteSelect');
 var exitVote = document.getElementById('exitVote');
+const voteBtnArray = [];
 
 // Event Notification
 var gameEventGUI = document.getElementById('gameEventGUI');
@@ -478,6 +479,8 @@ socket.on('getVote', function(){ // on server request, send the votes
 // display buttons
 
 socket.on('chatroomsInit', function(data){
+    console.log('firedclientside chatroomsInit');
+
     var visibility;
     for (i = 0; i < data.playerRooms.length; i++) {
         if (data.playerRooms[i] === '') {
@@ -488,7 +491,10 @@ socket.on('chatroomsInit', function(data){
         }
         chatroomBtnArray[i].style.visibility = visibility;
     }
-    console.log('chatroomsinit tes ****' + data.playerRooms);
+    //console.log('chatroomsinit:' + data.playerRooms);
+
+    chatroomBtn0.style.color = 'white';
+    chatroomBtn0.style.backgroundColor = "black";    
 });
 
 socket.on('detectiveInit', function(data){
@@ -499,29 +505,33 @@ socket.on('detectiveClear', function(data){
     icon2.style.display = 'none';
 });
 
-/*
-// on button clicks
-for (i = 0; i < chatroomBtnArray.length; i++) {
-    chatroomBtnArray[i].addEventListener('click', function(){
-        key = chatroomBtnArray[i].innerHTML;
-        socket.emit('chatroomsVerify', {
-            key: key
-        })
-    });
-}
-*/
+// Chat button generator / chatroombutton clicked
 
-// Chat button generator
 for (i=0; i < chatroomBtnArray.length; i++) {
     document.getElementById("chatroomBtn"+i).addEventListener('click', (function(){
-        var index = i;
-        return function() {
-            socket.emit('chatroomsVerify', {
-                index: index
-            })
+    var index = i;
+    return function() {
+        socket.emit('chatroomsVerify', {
+            index: index
+        });
+
+        for(var x = 0; x < chatroomBtnArray.length; x++) {
+            chatroomBtnArray[x].style.color = 'black';
+            chatroomBtnArray[x].style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
         }
-    })());
+
+        chatroomBtnArray[index].style.color = 'white';
+        chatroomBtnArray[index].style.backgroundColor = "black";
+    }
+ })());
 }
+/*
+socket.on('chatroomBtn0Highlight', function(data){
+    chatroomBtn0.style.color = 'white';
+    chatroomBtn0.style.backgroundColor = "black";
+});
+*/
+
 
 
 
@@ -529,10 +539,11 @@ for (i=0; i < chatroomBtnArray.length; i++) {
 socket.on('chatroomsVerify', function(data){
         if (data.verified == true) { // verify permission to access this button
             console.log('detected a button click as expected') // hide current chatroom, display the new chatroom 
+            //console.log('room verified: ' + data.index);
         } else {
             console.log('detected an unexpected button click') // refresh user's buttons as they should be, maybe later add a cheating log
         }
-})
+});
 
 
 /* Listen for events
@@ -590,29 +601,68 @@ socket.on('timerUpdate', function (data) {
 socket.on('hideById', function(data){ //
     document.getElementById(`${data.ID}`).style.visibility= 'hidden' ;
 });
-
-
-
-/*showVote.addEventListener('click', function(){ //
-    socket.emit('showVote', { 
-    });
-}); */
-
+/*
 socket.on('showVote', function(data){ // show card
     groupVoteButtons.innerHTML = data.buttonParse;
     voteSelect.innerHTML = '';
     groupVoteGUI.style.visibility= 'visible';
+});*/
+
+
+socket.on('showVote', function(data){
+
+    var buttonsArray = data.buttonParse;
+
+    // button array creator
+
+    for (i=0; i < buttonsArray.length; i++) { // push parsed buttons into an array
+
+        // CREATE THE BUTTON
+
+        var x = document.createElement("BUTTON"); // create button html element
+        x.classList.add("playerButton"); // add playerButton class (styling)
+        x.setAttribute("id", "voteBtn"+i); // set the button's ID
+        var t = document.createTextNode(`${buttonsArray[i].playerName}`); // specify name of the button
+        x.appendChild(t); // append name to button
+        document.getElementById("groupVoteButtons").appendChild(x); // append button to parent element
+
+        window['voteBtnVar'+i] = document.getElementById('voteBtn'+ i); // create dynamic variable for HTMLButtonElement
+        voteBtnArray.push(window['voteBtnVar'+i]);
+
+        document.getElementById('voteBtn'+i).addEventListener('click', (function(){ // provide dynamic button functionality
+            var index = i;
+            var btnsArray = buttonsArray;
+            return function() {
+
+                socket.emit('voteUpdate', {
+                    index: index,
+                    btnsArray: btnsArray
+                });                
+
+                for (y=0; y < voteBtnArray.length; y++) {
+                    voteBtnArray[y].style.color = 'black';
+                    voteBtnArray[y].style.backgroundColor = "white";    
+                }
+                voteBtnArray[index].style.color = 'white';
+                voteBtnArray[index].style.backgroundColor = "black";    
+            }
+         })());
+
+         groupVoteGUI.style.visibility = 'visible';
+    }
 });
 
 
 exitVote.addEventListener('click', function(){
-    socket.emit('exitVote', { // for verification ONLY
-        vote: voteSelect.innerHTML
-    });
+    socket.emit('exitVote'); // verify whether player has voted, if true exit as expected
 });
 
 socket.on('exitVote', function(){ // hide and reset vote window
-    groupVoteGUI.style.visibility= 'hidden';
+
+    for (y=0; y < voteBtnArray.length; y++) { // remove voting buttons
+        voteBtnArray[y].remove();
+    }
+    groupVoteGUI.style.visibility= 'hidden'; // hide GUI
 });
 
 

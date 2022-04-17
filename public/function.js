@@ -1,18 +1,10 @@
 //init variables
+var playerStatus = 'alive'
 var playerRole = '';
 var playerTeam = '';
 var playerId = 0;
-var playerVotes = this.playerVotes;
-this.playerVotes = 0;
-
-var playerVotesFor = this.playerVotesFor;
-this.playerVotesFor = '';
-
-/*
-playerRole = '';
-playerTeam = '';
-playerStatus = "Alive";
-*/
+var playerVotes = 0;
+var playerVotesFor = '';
 
 // ARRAYS
 const playersArray = [];
@@ -27,9 +19,10 @@ const chatroomsArray = []; // stores chatrooms that a user has access to
 // CLASSES
 
 const Player = class {
-    constructor(playerId, socketId, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom, playerLead){
+    constructor(playerId, socketId, playerStatus, playerName, playerRole, playerTeam, playerVotes, playerVotesFor, killTarget, protectTarget, currentChatRoom, playerLead){
         this.playerId = playerId;
         this.socketId = socketId;
+        this.playerStatus = playerStatus;
         this.playerName = playerName;
         this.playerRole = playerRole;
         this.playerTeam = playerTeam;
@@ -233,7 +226,7 @@ rolesArray.push(
     Infectleader
 );
 
-const Room = class { // class for storing phase information
+const Chatroom = class { // class for storing chat information
     constructor(socketId, roomMain, roomRole, roomPlus){
         // Info
         this.socketId = socketId; //                Socket Id
@@ -245,14 +238,25 @@ const Room = class { // class for storing phase information
 
 var userCreate = function(socketId){
 
-    var x = new Player(playerId, socketId, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general', false);
+    var x = new Player(playerId, socketId, playerStatus, `Player ${playerId}`, playerRole, playerTeam, playerVotes, playerVotesFor, false, false, 'general', false);
     playersArray.push(x);
-    console.log(`Player ${playerId} connected (${socketId})`); // debug only
-    output = `Player ${playerId} connected (${socketId})`;
+    console.log(`Player ${playerId} connected (${socketId}), status:${playerStatus}`); // debug only
+    //output = `Player ${playerId} connected (${socketId})`;
     playerId++;
-    return output;
+    return;
 }
 
+// Current alive players array
+
+var playersAlive = function() {
+    const playersAliveArr = [];
+        for(i = 0;i < playersArray.length;i++){
+            if(playersArray[i].playerStatus == 'alive') {
+                playersAliveArr.push(playersArray[i]);
+            }
+        }
+    return playersAliveArr;
+}
 
 
 // Index searching
@@ -271,7 +275,7 @@ var getPlayerBySocket = function(socketID) {
           if(playersArray[i].socketId == socketID){
             return i;
         }
-  }
+    }
 }
 
 var getRoomsBySocket = function(socketID) {
@@ -334,6 +338,14 @@ var isSus = function(roleName) { // roles
 
 }
 
+var isAlive = function(socketID) {
+    if (playersArray[getPlayerBySocket(socketID).playerStatus] == 'alive') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 var isSpectator = function(socketID) {
     if (playersArray[getPlayerBySocket(socketID)] == null) {
         return true;
@@ -343,8 +355,9 @@ var isSpectator = function(socketID) {
 }
 
 var roleExists = function(role) {
-    for(i = 0;i < playersArray.length;i++){
-        if(playersArray[i].playerRole == role){
+    var playersAliveArr = playersAlive();
+    for(i = 0;i < playersAliveArr.length;i++){
+        if(playersAliveArr[i].playerRole == role){
           return true;
       }
   }
@@ -385,31 +398,51 @@ var updateLead = function(socket) { // remove lead from existing players and upd
 
 function playerListUpdate() {
     var playerList = '';
-    for (i = 0; i < playersArray.length; i++) {
+    for (i = 0; i < playersArray.length; i++) { // Alive players, first pass
         var name = playersArray[i].playerName;
         var vote = playersArray[i].playerVotes;
-
-        if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
-            if (vote === undefined || vote === null) {
-                playerList += `<li style="color:gold" class='playerListItem'>${name}</li>`;
-            } else
-            playerList += `<li style="color:gold" class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
-        } else { // if player is not lead don't show a lil dot
-            if (vote === undefined || vote === null) {
-                playerList += `<li class='playerListItem'> ${name} </li>`;
-            } else
-            playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+        if (playersArray[i].playerStatus == 'alive') {
+            if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'>• ${name}</li>`;
+                } else
+                playerList += `<li class='playerListItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
+            } else { // if player is not lead don't show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListItem'> ${name} </li>`;
+                } else
+                playerList += `<li class='playerListItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+            }
         }
     }
+    for (i = 0; i < playersArray.length; i++) { // Dead players second pass
+        var name = playersArray[i].playerName;
+        var vote = playersArray[i].playerVotes;
+        if (playersArray[i].playerStatus == 'dead') {
+            if (playersArray[i].playerLead == 'true') { // if player is lead show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListDeadItem'>• ${name}</li>`;
+                } else
+                playerList += `<li class='playerListDeadItem'>• ${name} - <span class='votes'>${vote}</span> </li>`;
+            } else { // if player is not lead don't show a lil dot
+                if (vote === undefined || vote === null) {
+                    playerList += `<li class='playerListDeadItem'> ${name} </li>`;
+                } else
+                playerList += `<li class='playerListDeadItem'> ${name} - <span class='votes'>${vote}</span> </li>`;
+            }
+        }
+    }
+
     return playerList;
 } // style="list-style-image:url('./src/iconDot.svg')"
 
-var getPlayerVote = function() { // called by the generated buttons
+/*
+var getPlayerVote = function() { // REQUIRED: called by the generated buttons
     //testing only
     vote = event.srcElement.id;
     document.getElementById("voteSelect").innerHTML = vote;
 }
-
+*/
 
 // fischer shuffle (true random shuffle)
 const shuffleArray = array => {
@@ -476,7 +509,7 @@ var initRoleAssign = function() {
 
         // create room here
 
-        var y = new Room(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available
+        var y = new Chatroom(playersArray[i].socketId, 'general', roomRole, roomPlus); // initiate rooms available
         chatroomsArray.push(y);
 
         //console.log(chatroomsArray[i]);
@@ -502,43 +535,8 @@ var resetPlayers = function() {
     clearArray(playersArray);
     clearArray(chatroomsArray);
     clearArray(availableRoles);
+    //clearArray..
 }
-
-
-
-
-/*
-var chatroomsGet = function(socketID) { // output rooms object as an array
-    r = getRoomsBySocket(socketID);
-    if (getRoomsBySocketExists(socketID) == true) {
-        rooms = [r.roomMain, r.roomRole, r.roomPlus]
-        return rooms;
-    } else {
-        return;
-    }
-}
-*/
-
-// ahhhhhhhhhhhhh console.log(getTeamByRole('civilian'));
-
-/*
-var initTeamAssign = function() {
-    for (l = playersArray.length -1; l>= 0; --l){
-        var team = getTeamByRole(playersArray[l].playerRole);
-        console.log(team);
-
-        //playersArray[l].playerTeam = team;
-
-
-
-        //playersArray[i].playerTeam = getRoleByName(playersArray[i].playerRole);
-
-        //console.log('Team - ' + team);
-        //console.log('ID:'+playersArray[i].playerId +", "+playersArray[i].playerName+", Role: "+playersArray[i].playerRole);
-        //console.log(playersArray[i].playerId + playersArray[i].playerTeam);
-    }
-    //console.log(playersArray);
-}*/
 
 var splicifier = function(e) { // for roles init
     for (l = availableRoles.length; l>= 0; --l) {
@@ -551,17 +549,26 @@ var splicifier = function(e) { // for roles init
 
 // Win conditions
 
-var numberOf = function(role) {
+var numberOfRole = function(role) { // only alive counted
     var total = 0;
     for(i = 0;i < playersArray.length;i++){
-        if(playersArray[i].playerRole == role){
+        if(playersArray[i].playerRole == role && playersArray[i].playerStatus == 'alive'){
+          total++;
+      }
+    } return total;
+}
+
+var numberOfStatus = function(status) {
+    var total = 0;
+    for(i = 0;i < playersArray.length;i++){
+        if(playersArray[i].playerStatus == status){
           total++;
       }
     } return total;
 }
 
 var civilWin = function() {
-    if (numberOf('mafia') < 1) {
+    if (numberOfRole('mafia') < 1) {
         return true;
     } else {
         return false;
@@ -569,7 +576,7 @@ var civilWin = function() {
 }
 
 var mafiaWin = function() {
-    if (numberOf('mafia') >= playersArray.length / 2) {
+    if (numberOfRole('mafia') >= numberOfStatus('alive') / 2) { // was: (numberOfRole('mafia') >= playersArray.length / 2)
         return true;
     } else {
         return false;
@@ -606,11 +613,13 @@ module.exports = {
     suspectsRevealed: suspectsRevealed,
     playersKilled: playersKilled,
 
+    playersAlive: playersAlive,
     userCreate: userCreate,
     getPlayerBySocket: getPlayerBySocket,
     getPlayerById: getPlayerById,
     getSocketArray: getSocketArray,
     isSus: isSus,
+    isAlive: isAlive,
     isSpectator: isSpectator,
     roleExists: roleExists,
     playerExists: playerExists,
@@ -621,6 +630,7 @@ module.exports = {
     playerListUpdate: playerListUpdate,
     initRoleAssign: initRoleAssign,
     chatroomsGet: chatroomsGet,
+    getRoomsBySocket: getRoomsBySocket,
     getRoomsBySocketExists: getRoomsBySocketExists,
     //initTeamAssign, initTeamAssign,
 
